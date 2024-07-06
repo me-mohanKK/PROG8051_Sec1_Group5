@@ -39,7 +39,7 @@ The Expense Tracker Application is a robust solution designed to help users mana
 ### Prerequisites
 
 - [.NET Core](https://dotnet.microsoft.com/download)
-- [Visual Studio](https://visualstudio.microsoft.com/) (or any other preferred IDE)
+- [Visual Studio](https://visualstudio.microsoft.com/)
 
 ### Installation
 
