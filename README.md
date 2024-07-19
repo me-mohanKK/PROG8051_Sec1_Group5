@@ -32,10 +32,12 @@ Group Management
 Users can create groups for managing shared expenses.
 Functionality to add or remove members from groups.
 View group-specific expenses.
+
 Getting Started
 Prerequisites
 .NET Core
 Visual Studio
 Installation
+
 Clone the repository:
 git clone https://github.com/me-mohanKK/PROG8051_Sec1_Group5.git
