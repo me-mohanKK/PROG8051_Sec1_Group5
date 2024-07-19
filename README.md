@@ -1,5 +1,7 @@
 PROG8051_Sec1_Group5
+
 Expense Tracker Application
+
 Description
 The Expense Tracker Application is a robust solution designed to help users manage and track their shared expenses efficiently. The application offers features like user registration, login, expense entry, debt settlement, expense history viewing, and group management. It aims to simplify the process of managing shared costs among friends, family, or colleagues by providing an intuitive and user-friendly interface.
 
