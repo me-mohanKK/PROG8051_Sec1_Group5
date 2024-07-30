@@ -29,6 +29,18 @@
         
         <StackPanel Margin="10">
 
+                <Menu VerticalAlignment="Top" Background="LightGray">
+                    <MenuItem Header="_File">
+                        <MenuItem Header="_New Expense" Click="NewExpense_Click"/>
+                        <MenuItem Header="_Exit" Click="Exit_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="_View">
+                        <MenuItem Header="_Expense List" Click="ExpenseList_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="_Help">
+                        <MenuItem Header="_About" Click="About_Click"/>
+                    </MenuItem>
+                </Menu>
 
       
                 <StackPanel Orientation="Vertical">

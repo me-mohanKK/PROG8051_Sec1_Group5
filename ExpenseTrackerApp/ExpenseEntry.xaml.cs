@@ -31,8 +31,6 @@ namespace ExpenseTrackerApp
             LoadExpenses();
         }
 
-
-
         private void AddExpenseButton_Click(object sender, RoutedEventArgs e)
         {
             MessageTextBlock.Text = "";
