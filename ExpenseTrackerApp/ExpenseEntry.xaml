@@ -8,181 +8,230 @@
         Title="ExpenseEntry" Height="450" Width="800">
     <Grid>
 
-        <Grid.RowDefinitions>
-            <RowDefinition>
-            </RowDefinition>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <!-- Sidebar Width -->
+            <ColumnDefinition Width="573*"/>
+            <ColumnDefinition Width="22*"/>
+            <ColumnDefinition Width="5*"/>
+            <!-- Main Content Width -->
+        </Grid.ColumnDefinitions>
 
-     
-          
-        </Grid.RowDefinitions>
 
-        <Border CornerRadius="10" Grid.RowSpan="5">
+        <Border CornerRadius="10" Grid.ColumnSpan="4">
             <Border.Background>
                 <LinearGradientBrush>
-                    <GradientStop Color="Navy" Offset="0.0"></GradientStop>
-                    <GradientStop Color="DarkRed" Offset="1"></GradientStop>
+                    <GradientStop Color="Navy" Offset="0.0"/>
+                    <GradientStop Color="DarkRed" Offset="1"/>
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
 
-        <ScrollViewer>
-        
-        <StackPanel Margin="10">
-
-                <Menu VerticalAlignment="Top" Background="LightGray">
-                    <MenuItem Header="_File">
-                        <MenuItem Header="_New Expense" Click="NewExpense_Click"/>
-                        <MenuItem Header="_Exit" Click="Exit_Click"/>
-                    </MenuItem>
-                    <MenuItem Header="_View">
-                        <MenuItem Header="_Expense List" Click="ExpenseList_Click"/>
-                    </MenuItem>
-                    <MenuItem Header="_Help">
-                        <MenuItem Header="_About" Click="About_Click"/>
-                    </MenuItem>
-                </Menu>
-
-      
-                <StackPanel Orientation="Vertical">
-
-                    <Label Content="Amount " Foreground="White" 
-                           HorizontalAlignment="Center"
-                            Background="Transparent"
-                            HorizontalContentAlignment="Left"
-                            Width="250"
-                             FontFamily="helvetica"   
-                          />
-
-                    <TextBox FontFamily="Helvetica"
-                         FontWeight="Light"
-                             Name="AmountTextBox"
-                         Foreground="Wheat"
-                         FontSize="20"
-                         HorizontalAlignment="Center"
-                         Background="Transparent"
-                         HorizontalContentAlignment="Left"
-                         Width="250"
-                         Height="30"/>
-
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical">
-
-                    <Label Content="Description" Foreground="White" 
-           HorizontalAlignment="Center"
-            Background="Transparent"
-            HorizontalContentAlignment="Left"
-            Width="250"
-             FontFamily="helvetica"   
-          />
-
-                    <TextBox FontFamily="Helvetica"
-         FontWeight="Light"
-             Name="DescriptionTextBox"
-         Foreground="Wheat"
-         FontSize="20"
-         HorizontalAlignment="Center"
-         Background="Transparent"
-         HorizontalContentAlignment="Left"
-         Width="250"
-         Height="30"/>
-
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical">
-
-                    <Label Content="Date" Foreground="White" 
-  HorizontalAlignment="Center"
-   Background="Transparent"
-   HorizontalContentAlignment="Left"
-   Width="250"
-    FontFamily="helvetica"   
- />
-
-                    <DatePicker x:Name="DatePicker"
-                                 HorizontalAlignment="Center"
-  Background="Transparent"
-  HorizontalContentAlignment="Left"
-  Width="250"
-   FontFamily="helvetica" 
-                                Margin="10"/>
-
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical">
-
-                    <Label Content="Payer Name" Foreground="White" 
- HorizontalAlignment="Center"
-  Background="Transparent"
-  HorizontalContentAlignment="Left"
-  Width="250"
-   FontFamily="helvetica"   
-/>
-
-
-                <TextBox FontFamily="Helvetica"
-FontWeight="Light"
-    Name="PayerTextBox"
-Foreground="Wheat"
-FontSize="20"
-HorizontalAlignment="Center"
- Background="Transparent"
-HorizontalContentAlignment="Left"
-Width="250"
-Height="30"/>
-
-            </StackPanel>
-
-
-                <StackPanel Orientation="Vertical">
-
-                    <Label Content="Participants" Foreground="White" 
- HorizontalAlignment="Center"
-  Background="Transparent"
-  HorizontalContentAlignment="Left"
-  Width="250"
-   FontFamily="helvetica"   
-/>
-
-
-                <TextBox FontFamily="Helvetica"
-FontWeight="Light"
-    Name="ParticipantsTextBox"
-Foreground="Wheat"
-FontSize="20"
-HorizontalAlignment="Center"
- Background="Transparent"
-HorizontalContentAlignment="Left"
-Width="250"
-Height="30"/>
-            </StackPanel>
-
- 
-            <Button Content="Add Expense"
-                    Foreground="Wheat"
-FontSize="20"
-HorizontalAlignment="Center"
- Background="Transparent"
-HorizontalContentAlignment="Left"
-Width="250"
-Height="30"
-                    Click="AddExpenseButton_Click" Margin="10"/>
-            
-            <TextBlock x:Name="MessageTextBlock"
-                       
-                       Foreground="Wheat"
-FontSize="20"
-HorizontalAlignment="Center"
- Background="Transparent"
-
-Width="250"
-Height="30"
-                        Margin="10"/>
-            
-            <ListBox x:Name="ExpenseListBox"
-                     
-                     Margin="10" Height="200"/>
+        <!-- Sidebar Menu -->
+        <StackPanel Grid.Column="0">
+            <Button Content="New Expense" Style="{StaticResource SidebarButtonStyle}" Click="NewExpenseButton_Click"/>
+            <Button Content="Expense History" Style="{StaticResource SidebarButtonStyle}" Click="ExpenseHistoryButton_Click"/>
+            <Button Content="Groups" Style="{StaticResource SidebarButtonStyle}" Click="GroupsButton_Click"/>
+            <Button Content="Logout" Style="{StaticResource SidebarButtonStyle}" Click="LogoutButton_Click"/>
         </StackPanel>
+
+        <!--  <StackPanel Orientation="Horizontal" Background="Transparent" VerticalAlignment="Bottom">
+            <Button Content="Logout" 
+            Foreground="Wheat"
+            FontSize="20"
+            HorizontalAlignment="Left"
+            Background="Transparent"
+            HorizontalContentAlignment="Center"
+            Margin="10"
+            Click="LogoutButton_Click"/>
+        </StackPanel>-->
+
+        <ScrollViewer Margin="10,10,5,10" Grid.Column="1" Grid.ColumnSpan="2">
+            <StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Amount" Foreground="White" 
+                           HorizontalAlignment="Center"
+                           Background="Transparent"
+                           HorizontalContentAlignment="Left"
+                           Width="250"
+                           FontFamily="helvetica"/>
+                    <TextBox x:Name="AmountTextBox"
+                             FontFamily="Helvetica"
+                             FontWeight="Light"
+                             Foreground="Wheat"
+                             FontSize="20"
+                             HorizontalAlignment="Center"
+                             Background="Transparent"
+                             HorizontalContentAlignment="Left"
+                             Width="250"
+                             Height="30"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Description" Foreground="White" 
+                           HorizontalAlignment="Center"
+                           Background="Transparent"
+                           HorizontalContentAlignment="Left"
+                           Width="250"
+                           FontFamily="helvetica"/>
+                    <TextBox x:Name="DescriptionTextBox"
+                             FontFamily="Helvetica"
+                             FontWeight="Light"
+                             Foreground="Wheat"
+                             FontSize="20"
+                             HorizontalAlignment="Center"
+                             Background="Transparent"
+                             HorizontalContentAlignment="Left"
+                             Width="250"
+                             Height="30"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Date" Foreground="White" 
+                           HorizontalAlignment="Center"
+                           Background="Transparent"
+                           HorizontalContentAlignment="Left"
+                           Width="250"
+                           FontFamily="helvetica"/>
+                    <DatePicker x:Name="DatePicker"
+                                HorizontalAlignment="Center"
+                                Background="Transparent"
+                                HorizontalContentAlignment="Left"
+                                Width="250"
+                                FontFamily="helvetica"
+                                Margin="10"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Payer Name" Foreground="White" 
+                           HorizontalAlignment="Center"
+                           Background="Transparent"
+                           HorizontalContentAlignment="Left"
+                           Width="250"
+                           FontFamily="helvetica"/>
+                    <TextBox x:Name="PayerTextBox"
+                             FontFamily="Helvetica"
+                             FontWeight="Light"
+                             Foreground="Wheat"
+                             FontSize="20"
+                             HorizontalAlignment="Center"
+                             Background="Transparent"
+                             HorizontalContentAlignment="Left"
+                             Width="250"
+                             Height="30"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Participants" Foreground="White"  
+                           HorizontalAlignment="Center"
+                           Background="Transparent"
+                           HorizontalContentAlignment="Left"
+                           Width="250"
+                           FontFamily="helvetica"/>
+                    <ComboBox x:Name="ParticipantsComboBox" Background="Transparent"
+              SelectionChanged="ParticipantsComboBox_SelectionChanged"
+              FontFamily="Helvetica"
+              FontWeight="Light"
+              Foreground="Black"
+              FontSize="20"
+              
+              Width="250"
+              Height="30"/>
+                    <!--
+                    <TextBox x:Name="ParticipantsTextBox"
+                             FontFamily="Helvetica"
+                             FontWeight="Light"
+                             Foreground="Wheat"
+                             FontSize="20"
+                             HorizontalAlignment="Center"
+                             Background="Transparent"
+                             HorizontalContentAlignment="Left"
+                             Width="250"
+                             Height="30"/> -->
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Split Method" Foreground="White" 
+                           HorizontalAlignment="Center"
+                           Background="Transparent"
+                           HorizontalContentAlignment="Left"
+                           Width="250"
+                           
+                           FontFamily="helvetica"/>
+                    <ComboBox x:Name="SplitMethodComboBox" SelectionChanged="SplitMethodComboBox_SelectionChanged" Width="250" Height="30" Background="Transparent" FontFamily="helvetica">
+                        <ComboBoxItem  Content="Equally" IsSelected="True" FontFamily="helvetica"/>
+                        <ComboBoxItem Content="By Percentage" FontFamily="helvetica"/>
+                        <ComboBoxItem Content="By Custom Amounts" FontFamily="helvetica"/>
+                    </ComboBox>
+
+                </StackPanel>
+
+                <StackPanel x:Name="SplitOptionsPanel" Orientation="Vertical" Visibility="Collapsed">
+                    <StackPanel x:Name="EqualSplitPanel" Orientation="Vertical" Visibility="Collapsed">
+                        <!-- Equal split panel contents if any -->
+                    </StackPanel>
+
+                    <StackPanel x:Name="PercentageSplitPanel" Orientation="Vertical" Visibility="Collapsed">
+                        <Label Content="Percentages" Foreground="White" 
+                               HorizontalAlignment="Center"
+                               Background="Transparent"
+                               HorizontalContentAlignment="Left"
+                               Width="250"
+                               FontFamily="helvetica"/>
+                        <TextBox x:Name="PercentagesTextBox"
+                                 FontFamily="Helvetica"
+                                 FontWeight="Light"
+                                 Foreground="Wheat"
+                                 FontSize="20"
+                                 HorizontalAlignment="Center"
+                                 Background="Transparent"
+                                 HorizontalContentAlignment="Left"
+                                 Width="250"
+                                 Height="30"/>
+                    </StackPanel>
+
+                    <StackPanel x:Name="CustomAmountsPanel" Orientation="Vertical" Visibility="Collapsed">
+                        <Label Content="Custom Amounts" Foreground="White" 
+                               HorizontalAlignment="Center"
+                               Background="Transparent"
+                               HorizontalContentAlignment="Left"
+                               Width="250"
+                               FontFamily="helvetica"/>
+                        <TextBox x:Name="CustomAmountsTextBox"
+                                 FontFamily="Helvetica"
+                                 FontWeight="Light"
+                                 Foreground="Wheat"
+                                 FontSize="20"
+                                 HorizontalAlignment="Center"
+                                 Background="Transparent"
+                                 HorizontalContentAlignment="Left"
+                                 Width="250"
+                                 Height="30"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <Button Content="Add Expense"
+                        Foreground="Wheat"
+                        FontSize="20"
+                        HorizontalAlignment="Center"
+                        Background="DarkGreen"
+                        HorizontalContentAlignment="Left"
+                        Width="250"
+                        Height="30"
+                        Click="AddExpenseButton_Click" Margin="10"/>
+
+                <TextBlock x:Name="MessageTextBlock"
+                           Foreground="Wheat"
+                           FontSize="20"
+                           HorizontalAlignment="Center"
+                           Background="Transparent"
+                           Width="250"
+                           Height="30"
+                           Margin="10"/>
+
+                <ListBox x:Name="ExpenseListBox"
+                         Margin="10" Height="200"/>
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </Window>

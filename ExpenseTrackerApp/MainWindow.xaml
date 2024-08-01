@@ -5,9 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExpenseTrackerApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="400"
-        AllowsTransparency="False" Background="Transparent"
-        WindowStyle="ToolWindow" ResizeMode="NoResize">
+        Title="MainWindow" AllowsTransparency="False" Background="Transparent"
+        WindowState="Maximized" WindowStyle="SingleBorderWindow" ResizeMode="CanResize">
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
@@ -20,7 +19,7 @@
             <Border CornerRadius="10" Grid.RowSpan="2">
                 <Border.Background>
                     <LinearGradientBrush>
-                        <GradientStop Color="Navy" Offset="0.0"></GradientStop>
+                        <GradientStop Color= "Navy" Offset="0.0"></GradientStop>
                         <GradientStop Color="DarkRed" Offset="1"></GradientStop>
                     </LinearGradientBrush>
                 </Border.Background>
