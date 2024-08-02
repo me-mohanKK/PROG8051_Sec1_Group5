@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ExpenseTrackerApp;
+using Org.BouncyCastle.Utilities;
 
 namespace ExpenseTrackerApp
 {
@@ -21,11 +22,16 @@ namespace ExpenseTrackerApp
     {
         private string connectionString = "Server=localhost;Port=3306;Database=ExpenseTracker;Uid=root;";
         private ObservableCollection<string> expenseList = new ObservableCollection<string>();
+        private ObservableCollection<string> participantList = new ObservableCollection<string>();
+        public ObservableCollection<string> Participants { get; set; }
 
         public ExpenseEntry()
         {
             InitializeComponent();
             ExpenseListBox.ItemsSource = expenseList;
+            MainExpenseListBox.ItemsSource = expenseList;
+            ParticipantListBox.ItemsSource = participantList;
+            Participants = new ObservableCollection<string>();
             LoadExpenses();
             PopulateParticipantsDropdown();
 
@@ -57,7 +63,7 @@ namespace ExpenseTrackerApp
                 return;
             }
 
-            string splitMethod = (SplitMethodComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+       /*     string splitMethod = (SplitMethodComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
             if (splitMethod == "By Percentage")
             {
                 // Validate and parse percentages
@@ -84,7 +90,7 @@ namespace ExpenseTrackerApp
                     MessageTextBlock.Text = "The number of custom amounts must match the number of participants.";
                     return;
                 }
-            }
+            }*/
 
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
@@ -96,8 +102,8 @@ namespace ExpenseTrackerApp
                 cmd.Parameters.AddWithValue("@date", date.Value);
                 cmd.Parameters.AddWithValue("@payer", payer);
                 cmd.Parameters.AddWithValue("@participants", participants);
-                cmd.Parameters.AddWithValue("@split_method", splitMethod);
-                cmd.Parameters.AddWithValue("@split_details", splitMethod == "By Percentage" ? PercentagesTextBox.Text : CustomAmountsTextBox.Text);
+                cmd.Parameters.AddWithValue("@split_method", Participants.Count().ToString());
+                cmd.Parameters.AddWithValue("@split_details", "");
 
                 try
                 {
@@ -133,10 +139,20 @@ namespace ExpenseTrackerApp
                     string participants = reader.GetString("participants");
 
                     // Check for NULL values before calling GetString
-                    string splitMethod = reader.IsDBNull(reader.GetOrdinal("split_method")) ? "N/A" : reader.GetString("split_method");
+                    string splitMethod = reader.IsDBNull(reader.GetOrdinal("split_method")) ? "1" : reader.GetString("split_method");
                     string splitDetails = reader.IsDBNull(reader.GetOrdinal("split_details")) ? "N/A" : reader.GetString("split_details");
+                    int div = 1;
+                   try
+                    {
+                        int.TryParse(splitMethod, out div);
+                    } catch (Exception ex)
+                    {
+                        div = 1;
 
-                    string expense = $"{amount:C} - {description} on {date.ToShortDateString()} by {payer} for {participants}. Split method: {splitMethod} ({splitDetails})";
+                    }
+                    
+                    //int div = int.Parse(splitMethod);
+                    string expense = $"{amount:C} - {description} on {date.ToShortDateString()} by {payer} split to {(div == 0 ? 1 : div + 1)} person {(amount/ (div==0?1:div+1)).ToString("F2")} equally";
                     expenseList.Add(expense);
                 }
             }
@@ -156,51 +172,33 @@ namespace ExpenseTrackerApp
             if (ParticipantsComboBox.SelectedItem != null)
             {
                 string selectedParticipant = ParticipantsComboBox.SelectedItem.ToString();
+                if (!Participants.Contains(selectedParticipant))
+                {
+                    Participants.Add(selectedParticipant);
+                    participantList.Add(selectedParticipant);
+                }
+               
                 // Do something with the selected participant
-                MessageBox.Show($"Selected participant: {selectedParticipant}");
+                //MessageBox.Show($"Selected participant: {selectedParticipant}");
             }
         }
+        
 
-        private void SplitMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+      /*  private void RemoveButton_Click(object sender, SelectionChangedEventArgs e)
         {
-            // Check if SplitOptionsPanel is initialized
-            if (SplitOptionsPanel != null)
-            {
-                if (SplitMethodComboBox.SelectedItem is ComboBoxItem selectedItem)
-                {
-                    string selectedMethod = selectedItem.Content.ToString();
-                    SplitOptionsPanel.Visibility = Visibility.Visible;
+            //Participants.Remove();
+        }*/
 
-                    // Set visibility of panels based on selected split method
-                    PercentageSplitPanel.Visibility = selectedMethod == "By Percentage" ? Visibility.Visible : Visibility.Collapsed;
-                    CustomAmountsPanel.Visibility = selectedMethod == "By Custom Amounts" ? Visibility.Visible : Visibility.Collapsed;
-                    EqualSplitPanel.Visibility = selectedMethod == "Equally" ? Visibility.Visible : Visibility.Collapsed;
-                }
-                else
-                {
-                    // Handle case when SelectedItem is null
-                    SplitOptionsPanel.Visibility = Visibility.Collapsed;
-                    PercentageSplitPanel.Visibility = Visibility.Collapsed;
-                    CustomAmountsPanel.Visibility = Visibility.Collapsed;
-                    EqualSplitPanel.Visibility = Visibility.Collapsed;
-                }
-            }
-            else
-            {
-                // Handle case where SplitOptionsPanel is null
-                MessageBox.Show("SplitOptionsPanel is not initialized.");
-            }
-        }
+   
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
 
             Confirmation_PopUp_Click(sender,e);
             // Close the current window (ExpenseEntry)
-            //this.Close();
+            
 
             // Show the login window
-           // MainWindow loginWindow = new MainWindow();
-            //loginWindow.Show();
+           
         }
 
         private void NewExpenseButton_Click(object sender, RoutedEventArgs e)
@@ -229,14 +227,29 @@ namespace ExpenseTrackerApp
             if (result == MessageBoxResult.Yes)
             {
                
-                this.Close();
+               
 
                 MainWindow loginWindow = new MainWindow();
                 loginWindow.Show();
+                this.Close();
             }
             else if (result == MessageBoxResult.No)
             {
                 // Do nothing, just close the message box
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            // Get the participant from the button's CommandParameter
+            var button = sender as FrameworkElement;
+            var participant = button?.DataContext as string;
+
+            if (participant != null)
+            {
+                // Remove the participant from the collection
+                Participants.Remove(participant);
+                participantList.Remove(participant);
             }
         }
     }

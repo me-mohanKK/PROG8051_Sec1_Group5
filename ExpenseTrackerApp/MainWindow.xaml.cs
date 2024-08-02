@@ -48,7 +48,7 @@ namespace ExpenseTrackerApp
                 int count = Convert.ToInt32(cmd.ExecuteScalar());
                 if (count == 1)
                 {
-                    MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     ExpenseEntry expenseEntryWindow = new ExpenseEntry();
                     expenseEntryWindow.Show();
                     this.Close();

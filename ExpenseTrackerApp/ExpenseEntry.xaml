@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExpenseTrackerApp"
         mc:Ignorable="d"
+        WindowState="Maximized"
         Title="ExpenseEntry" Height="450" Width="800">
-    <Grid>
 
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <!-- Sidebar Width -->
@@ -16,7 +17,6 @@
             <ColumnDefinition Width="5*"/>
             <!-- Main Content Width -->
         </Grid.ColumnDefinitions>
-
 
         <Border CornerRadius="10" Grid.ColumnSpan="4">
             <Border.Background>
@@ -27,34 +27,31 @@
             </Border.Background>
         </Border>
 
-        <!-- Sidebar Menu -->
-        <StackPanel Grid.Column="0">
-            <Button Content="New Expense" Style="{StaticResource SidebarButtonStyle}" Click="NewExpenseButton_Click"/>
-            <Button Content="Expense History" Style="{StaticResource SidebarButtonStyle}" Click="ExpenseHistoryButton_Click"/>
-            <Button Content="Groups" Style="{StaticResource SidebarButtonStyle}" Click="GroupsButton_Click"/>
-            <Button Content="Logout" Style="{StaticResource SidebarButtonStyle}" Click="LogoutButton_Click"/>
-        </StackPanel>
+        <!-- Sidebar Menu as TabControl -->
+        <TabControl Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    TabStripPlacement="Left" 
+                    Margin="10">
+            <!-- New Expense Tab -->
 
-        <!--  <StackPanel Orientation="Horizontal" Background="Transparent" VerticalAlignment="Bottom">
-            <Button Content="Logout" 
-            Foreground="Wheat"
-            FontSize="20"
-            HorizontalAlignment="Left"
-            Background="Transparent"
-            HorizontalContentAlignment="Center"
-            Margin="10"
-            Click="LogoutButton_Click"/>
-        </StackPanel>-->
+            <TabControl.Background>
+                <LinearGradientBrush>
+                    <GradientStop Color="Navy" Offset="0.0"/>
+                    <GradientStop Color="DarkRed" Offset="1"/>
+                </LinearGradientBrush>
+            </TabControl.Background>
+         
+            
+            <TabItem Header="New Expense">
 
-        <ScrollViewer Margin="10,10,5,10" Grid.Column="1" Grid.ColumnSpan="2">
-            <StackPanel>
-                <StackPanel Orientation="Vertical">
+                <ScrollViewer>
+                <StackPanel Margin="10">
                     <Label Content="Amount" Foreground="White" 
                            HorizontalAlignment="Center"
                            Background="Transparent"
                            HorizontalContentAlignment="Left"
                            Width="250"
-                           FontFamily="helvetica"/>
+                           FontFamily="Helvetica"/>
                     <TextBox x:Name="AmountTextBox"
                              FontFamily="Helvetica"
                              FontWeight="Light"
@@ -65,15 +62,12 @@
                              HorizontalContentAlignment="Left"
                              Width="250"
                              Height="30"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical">
                     <Label Content="Description" Foreground="White" 
                            HorizontalAlignment="Center"
                            Background="Transparent"
                            HorizontalContentAlignment="Left"
                            Width="250"
-                           FontFamily="helvetica"/>
+                           FontFamily="Helvetica"/>
                     <TextBox x:Name="DescriptionTextBox"
                              FontFamily="Helvetica"
                              FontWeight="Light"
@@ -84,31 +78,25 @@
                              HorizontalContentAlignment="Left"
                              Width="250"
                              Height="30"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical">
                     <Label Content="Date" Foreground="White" 
                            HorizontalAlignment="Center"
                            Background="Transparent"
                            HorizontalContentAlignment="Left"
                            Width="250"
-                           FontFamily="helvetica"/>
+                           FontFamily="Helvetica"/>
                     <DatePicker x:Name="DatePicker"
                                 HorizontalAlignment="Center"
                                 Background="Transparent"
                                 HorizontalContentAlignment="Left"
                                 Width="250"
-                                FontFamily="helvetica"
+                                FontFamily="Helvetica"
                                 Margin="10"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical">
                     <Label Content="Payer Name" Foreground="White" 
                            HorizontalAlignment="Center"
                            Background="Transparent"
                            HorizontalContentAlignment="Left"
                            Width="250"
-                           FontFamily="helvetica"/>
+                           FontFamily="Helvetica"/>
                     <TextBox x:Name="PayerTextBox"
                              FontFamily="Helvetica"
                              FontWeight="Light"
@@ -119,119 +107,94 @@
                              HorizontalContentAlignment="Left"
                              Width="250"
                              Height="30"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical">
                     <Label Content="Participants" Foreground="White"  
                            HorizontalAlignment="Center"
                            Background="Transparent"
                            HorizontalContentAlignment="Left"
                            Width="250"
-                           FontFamily="helvetica"/>
+                           FontFamily="Helvetica"/>
                     <ComboBox x:Name="ParticipantsComboBox" Background="Transparent"
-              SelectionChanged="ParticipantsComboBox_SelectionChanged"
-              FontFamily="Helvetica"
-              FontWeight="Light"
-              Foreground="Black"
-              FontSize="20"
-              
-              Width="250"
-              Height="30"/>
-                    <!--
-                    <TextBox x:Name="ParticipantsTextBox"
-                             FontFamily="Helvetica"
-                             FontWeight="Light"
-                             Foreground="Wheat"
-                             FontSize="20"
-                             HorizontalAlignment="Center"
-                             Background="Transparent"
-                             HorizontalContentAlignment="Left"
-                             Width="250"
-                             Height="30"/> -->
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical">
-                    <Label Content="Split Method" Foreground="White" 
-                           HorizontalAlignment="Center"
-                           Background="Transparent"
-                           HorizontalContentAlignment="Left"
-                           Width="250"
-                           
-                           FontFamily="helvetica"/>
-                    <ComboBox x:Name="SplitMethodComboBox" SelectionChanged="SplitMethodComboBox_SelectionChanged" Width="250" Height="30" Background="Transparent" FontFamily="helvetica">
-                        <ComboBoxItem  Content="Equally" IsSelected="True" FontFamily="helvetica"/>
-                        <ComboBoxItem Content="By Percentage" FontFamily="helvetica"/>
-                        <ComboBoxItem Content="By Custom Amounts" FontFamily="helvetica"/>
-                    </ComboBox>
-
-                </StackPanel>
-
-                <StackPanel x:Name="SplitOptionsPanel" Orientation="Vertical" Visibility="Collapsed">
-                    <StackPanel x:Name="EqualSplitPanel" Orientation="Vertical" Visibility="Collapsed">
-                        <!-- Equal split panel contents if any -->
-                    </StackPanel>
-
-                    <StackPanel x:Name="PercentageSplitPanel" Orientation="Vertical" Visibility="Collapsed">
-                        <Label Content="Percentages" Foreground="White" 
+                              SelectionChanged="ParticipantsComboBox_SelectionChanged"
+                              FontFamily="Helvetica"
+                              FontWeight="Light"
+                              Foreground="Black"
+                              FontSize="20"
+                              Width="250"
+                              Height="30"/>
+                    <ListBox x:Name="ParticipantListBox"
+                             Margin="10" Height="150" Width="250"
+                             ItemsSource="{Binding Participants}">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding}" Margin="5" VerticalAlignment="Center"/>
+                                    <Button Content="Remove" Click="Button_Click" CommandParameter="{Binding}" Margin="5"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    
+   
+                    <Button Content="Add Expense"
+                            Foreground="Wheat"
+                            FontSize="20"
+                            HorizontalAlignment="Center"
+                            Background="DarkGreen"
+                            HorizontalContentAlignment="Left"
+                            Width="250"
+                            Height="30"
+                            Click="AddExpenseButton_Click" Margin="10"/>
+                    <TextBlock x:Name="MessageTextBlock"
+                               Foreground="Wheat"
+                               FontSize="20"
                                HorizontalAlignment="Center"
                                Background="Transparent"
-                               HorizontalContentAlignment="Left"
                                Width="250"
-                               FontFamily="helvetica"/>
-                        <TextBox x:Name="PercentagesTextBox"
-                                 FontFamily="Helvetica"
-                                 FontWeight="Light"
-                                 Foreground="Wheat"
-                                 FontSize="20"
-                                 HorizontalAlignment="Center"
-                                 Background="Transparent"
-                                 HorizontalContentAlignment="Left"
-                                 Width="250"
-                                 Height="30"/>
-                    </StackPanel>
-
-                    <StackPanel x:Name="CustomAmountsPanel" Orientation="Vertical" Visibility="Collapsed">
-                        <Label Content="Custom Amounts" Foreground="White" 
-                               HorizontalAlignment="Center"
-                               Background="Transparent"
-                               HorizontalContentAlignment="Left"
-                               Width="250"
-                               FontFamily="helvetica"/>
-                        <TextBox x:Name="CustomAmountsTextBox"
-                                 FontFamily="Helvetica"
-                                 FontWeight="Light"
-                                 Foreground="Wheat"
-                                 FontSize="20"
-                                 HorizontalAlignment="Center"
-                                 Background="Transparent"
-                                 HorizontalContentAlignment="Left"
-                                 Width="250"
-                                 Height="30"/>
-                    </StackPanel>
+                               Height="30"
+                               Margin="10"/>
+                    <ListBox x:Name="ExpenseListBox"
+                             Margin="10" Height="200"/>
                 </StackPanel>
+                </ScrollViewer>
+                
+            </TabItem>
 
-                <Button Content="Add Expense"
-                        Foreground="Wheat"
-                        FontSize="20"
-                        HorizontalAlignment="Center"
-                        Background="DarkGreen"
-                        HorizontalContentAlignment="Left"
-                        Width="250"
-                        Height="30"
-                        Click="AddExpenseButton_Click" Margin="10"/>
+            <!-- Expense History Tab -->
+            <TabItem Header="Expense History">
+                <StackPanel Margin="10">
+                    <TextBlock Text="Expense History Screen" Foreground="White" FontSize="20" Margin="10"/>
+                    <ListBox x:Name="MainExpenseListBox"
+                     Margin="10" Height="200"/>
+                </StackPanel>
+            </TabItem>
 
-                <TextBlock x:Name="MessageTextBlock"
-                           Foreground="Wheat"
-                           FontSize="20"
-                           HorizontalAlignment="Center"
-                           Background="Transparent"
-                           Width="250"
-                           Height="30"
-                           Margin="10"/>
+            <!-- Groups Tab -->
+            <TabItem Header="Groups">
+                <StackPanel Margin="10">
+                    <TextBlock Text="Groups Screen" Foreground="White" FontSize="20" Margin="10"/>
+                    <!-- Add your controls for Groups here -->
+                </StackPanel>
+            </TabItem>
 
-                <ListBox x:Name="ExpenseListBox"
-                         Margin="10" Height="200"/>
-            </StackPanel>
-        </ScrollViewer>
+            <!-- Logout Tab -->
+            <TabItem Header="Logout">
+                <StackPanel Margin="10">
+                    <Button Content="Logout" 
+                            Foreground="Wheat"
+                            FontSize="20"
+                            HorizontalAlignment="Center"
+                            Background="Transparent"
+                            HorizontalContentAlignment="Center"
+                            Margin="10"
+                            Click="LogoutButton_Click"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
+
