@@ -28,8 +28,26 @@ namespace ExpenseTrackerApp
         public MainWindow()
         {
             InitializeComponent();
+            // userName.Visibility = Visibility.Hidden;
+            // Access the StackPanel
+           registerStackView.Visibility = Visibility.Hidden;
+            loginStackView.Visibility= Visibility.Hidden;
         }
 
+
+        private void LoginSelectionButton_Click(object sender, RoutedEventArgs e)
+        {
+            loginStackView.Visibility = Visibility.Visible;
+            registerStackView.Visibility = Visibility.Hidden;
+            selectionPanel.Visibility = Visibility.Hidden;
+        }
+
+        private void registerSelectionButton_Click(object sender, RoutedEventArgs e)
+        {
+            loginStackView.Visibility = Visibility.Hidden;
+            registerStackView.Visibility = Visibility.Visible;
+            selectionPanel.Visibility = Visibility.Hidden;
+        }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
