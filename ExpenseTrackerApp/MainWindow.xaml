@@ -143,7 +143,7 @@ Width="250"
 
             <StackPanel Grid.Row="1" Name="registerStackView" >
                
-                <TextBlock Text="Registeration"
+                <TextBlock Text="Registration"
             FontSize="20"
             FontWeight="SemiBold"
             FontFamily="helvetica"
@@ -152,78 +152,65 @@ Width="250"
             Height="40"></TextBlock>
 
                 <StackPanel Orientation="Vertical">
-
-                    <Label Content="User Name" Foreground="White" 
-                           HorizontalAlignment="Center"
-Background="Transparent"
-HorizontalContentAlignment="Left"
-Width="250"
- FontFamily="helvetica"
-                           
-                          />
+                    <Label Content="Email" Foreground="White" 
+           HorizontalAlignment="Center"
+           Background="Transparent"
+           HorizontalContentAlignment="Left"
+           Width="250"
+           FontFamily="helvetica"/>
 
                     <TextBox FontFamily="Helvetica"
-                         FontWeight="Light"
-                             Name="ruserName"
-                         Foreground="Wheat"
-                         FontSize="20"
-                         HorizontalAlignment="Center"
-                         Background="Transparent"
-                         HorizontalContentAlignment="Left"
-                         Width="250"
-                         Height="30"/>
-
+             FontWeight="Light"
+             Name="emailTextBox"
+             Foreground="Wheat"
+             FontSize="20"
+             HorizontalAlignment="Center"
+             Background="Transparent"
+             HorizontalContentAlignment="Left"
+             Width="250"
+             Height="30"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical">
-
                     <Label Content="User Name" Foreground="White" 
-                           HorizontalAlignment="Center"
-Background="Transparent"
-HorizontalContentAlignment="Left"
-Width="250"
- FontFamily="helvetica"
-                           
-                          />
+           HorizontalAlignment="Center"
+           Background="Transparent"
+           HorizontalContentAlignment="Left"
+           Width="250"
+           FontFamily="helvetica"/>
 
                     <TextBox FontFamily="Helvetica"
-                         FontWeight="Light"
-                             Name="tuserName"
-                         Foreground="Wheat"
-                         FontSize="20"
-                         HorizontalAlignment="Center"
-                         Background="Transparent"
-                         HorizontalContentAlignment="Left"
-                         Width="250"
-                         Height="30"/>
-
+             FontWeight="Light"
+             Name="ruserName"
+             Foreground="Wheat"
+             FontSize="20"
+             HorizontalAlignment="Center"
+             Background="Transparent"
+             HorizontalContentAlignment="Left"
+             Width="250"
+             Height="30"/>
                 </StackPanel>
 
-
-                <StackPanel Orientation="Vertical"
-                            Margin="0,10,0,0"
-                            >
+                <StackPanel Orientation="Vertical" Margin="0,10,0,0">
                     <Label Content="Password" Foreground="White" 
-                             HorizontalAlignment="Center"
-  Background="Transparent"
-  HorizontalContentAlignment="Left"
-  Width="250"
- FontFamily="helvetica"
-                           />
-                    <PasswordBox FontFamily="Helvetica"
-              FontWeight="Light"
-                              Name="rpasswordBox"
-              Password=""
-              Foreground="Wheat"
-              FontSize="20"
-              HorizontalAlignment="Center"
-              Background="Transparent"
-              HorizontalContentAlignment="Left"
-              Width="250"
-              Height="30"
-                                 ></PasswordBox>
+           HorizontalAlignment="Center"
+           Background="Transparent"
+           HorizontalContentAlignment="Left"
+           Width="250"
+           FontFamily="helvetica"/>
 
+                    <PasswordBox FontFamily="Helvetica"
+                FontWeight="Light"
+                Name="rpasswordBox"
+                Foreground="Wheat"
+                FontSize="20"
+                HorizontalAlignment="Center"
+                Background="Transparent"
+                HorizontalContentAlignment="Left"
+                Width="250"
+                Height="30"/>
                 </StackPanel>
+                
                 <StackPanel 
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

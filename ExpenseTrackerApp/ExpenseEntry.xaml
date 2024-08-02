@@ -28,7 +28,9 @@
         </Border>
 
         <!-- Sidebar Menu as TabControl -->
-        <TabControl Grid.Column="0"
+        <TabControl VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                    
+                    Grid.Column="0"
                     Grid.ColumnSpan="3"
                     TabStripPlacement="Left" 
                     Margin="10">
@@ -40,9 +42,15 @@
                     <GradientStop Color="DarkRed" Offset="1"/>
                 </LinearGradientBrush>
             </TabControl.Background>
-         
-            
-            <TabItem Header="New Expense">
+
+
+            <TabItem Header="New Expense" Width="200" Height="40" Foreground="Wheat" FontSize="20">
+                <TabItem.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="Navy" Offset="0.0"/>
+                        <GradientStop Color="DarkRed" Offset="1"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
 
                 <ScrollViewer>
                 <StackPanel Margin="10">
@@ -51,12 +59,13 @@
                            Background="Transparent"
                            HorizontalContentAlignment="Left"
                            Width="250"
+                           FontSize="15"
                            FontFamily="Helvetica"/>
                     <TextBox x:Name="AmountTextBox"
                              FontFamily="Helvetica"
                              FontWeight="Light"
                              Foreground="Wheat"
-                             FontSize="20"
+                             FontSize="15"
                              HorizontalAlignment="Center"
                              Background="Transparent"
                              HorizontalContentAlignment="Left"
@@ -67,12 +76,13 @@
                            Background="Transparent"
                            HorizontalContentAlignment="Left"
                            Width="250"
+                           FontSize="15"
                            FontFamily="Helvetica"/>
                     <TextBox x:Name="DescriptionTextBox"
                              FontFamily="Helvetica"
                              FontWeight="Light"
                              Foreground="Wheat"
-                             FontSize="20"
+                             FontSize="15"
                              HorizontalAlignment="Center"
                              Background="Transparent"
                              HorizontalContentAlignment="Left"
@@ -83,6 +93,7 @@
                            Background="Transparent"
                            HorizontalContentAlignment="Left"
                            Width="250"
+                           FontSize="15"
                            FontFamily="Helvetica"/>
                     <DatePicker x:Name="DatePicker"
                                 HorizontalAlignment="Center"
@@ -90,25 +101,27 @@
                                 HorizontalContentAlignment="Left"
                                 Width="250"
                                 FontFamily="Helvetica"
+                                FontSize="15"
                                 Margin="10"/>
                     <Label Content="Payer Name" Foreground="White" 
                            HorizontalAlignment="Center"
                            Background="Transparent"
                            HorizontalContentAlignment="Left"
                            Width="250"
+                           FontSize="15"
                            FontFamily="Helvetica"/>
                     <TextBox x:Name="PayerTextBox"
                              FontFamily="Helvetica"
                              FontWeight="Light"
                              Foreground="Wheat"
-                             FontSize="20"
+                             FontSize="15"
                              HorizontalAlignment="Center"
                              Background="Transparent"
                              HorizontalContentAlignment="Left"
                              Width="250"
                              Height="30"/>
                     <Label Content="Participants" Foreground="White"  
-                           HorizontalAlignment="Center"
+                           HorizontalAlignment="Center" FontSize="15"
                            Background="Transparent"
                            HorizontalContentAlignment="Left"
                            Width="250"
@@ -118,10 +131,11 @@
                               FontFamily="Helvetica"
                               FontWeight="Light"
                               Foreground="Black"
-                              FontSize="20"
+                              FontSize="15"
                               Width="250"
                               Height="30"/>
                     <ListBox x:Name="ParticipantListBox"
+                             FontSize="15"
                              Margin="10" Height="150" Width="250"
                              ItemsSource="{Binding Participants}">
                         <ListBox.ItemsPanel>
@@ -165,7 +179,13 @@
             </TabItem>
 
             <!-- Expense History Tab -->
-            <TabItem Header="Expense History">
+            <TabItem Header="Expense History" Width="200" Height="40" Foreground="Wheat" FontSize="20">
+                <TabItem.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="Navy" Offset="0.0"/>
+                        <GradientStop Color="DarkRed" Offset="1"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
                 <StackPanel Margin="10">
                     <TextBlock Text="Expense History Screen" Foreground="White" FontSize="20" Margin="10"/>
                     <ListBox x:Name="MainExpenseListBox"
@@ -174,7 +194,13 @@
             </TabItem>
 
             <!-- Groups Tab -->
-            <TabItem Header="Groups">
+            <TabItem Header="Groups" Width="200" Height="40" Foreground="Wheat" FontSize="20">
+                <TabItem.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="Navy" Offset="0.0"/>
+                        <GradientStop Color="DarkRed" Offset="1"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
                 <StackPanel Margin="10">
                     <TextBlock Text="Groups Screen" Foreground="White" FontSize="20" Margin="10"/>
                     <!-- Add your controls for Groups here -->
@@ -182,7 +208,13 @@
             </TabItem>
 
             <!-- Logout Tab -->
-            <TabItem Header="Logout">
+            <TabItem Header="Logout" Width="200" Height="40" Foreground="Wheat" FontSize="20">
+                <TabItem.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="Navy" Offset="0.0"/>
+                        <GradientStop Color="DarkRed" Offset="1"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
                 <StackPanel Margin="10">
                     <Button Content="Logout" 
                             Foreground="Wheat"

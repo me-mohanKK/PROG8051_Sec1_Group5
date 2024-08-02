@@ -10,6 +10,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
+using System.Text.RegularExpressions;
 
 
 
@@ -74,51 +75,94 @@ namespace ExpenseTrackerApp
                 }
                 else
                 {
-                    MessageBox.Show("Login Failes!", "Failed", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                  
+                    MessageBox.Show("Incorrect Username or Password!", "Failed", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
-            //string username = username.;
-            string password = passwordBox.Password;
+            string email = emailTextBox.Text;
+            string username = ExtractName(ruserName.Text);
+            string password = rpasswordBox.Password;
 
+            // Validate email format
+            if (!IsValidEmail(email))
+            {
+                MessageBox.Show("Please enter a valid email address.", "Invalid Email", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Validate alphanumeric password
+            if (!IsValidPassword(password))
+            {
+                MessageBox.Show("Password must be at least 8 characters long, contain a capital letter, a lowercase letter, and a number.", "Invalid Password", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Method to validate email format
+            
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 conn.Open();
-                string query = "INSERT INTO users (username, password) VALUES (@username, @password)";
+                string query = "INSERT INTO users (email, username, password) VALUES (@Email, @Username, @Password)";
                 MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@username", userName.Text);
-                cmd.Parameters.AddWithValue("@password", password);
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@Username", username);
+                cmd.Parameters.AddWithValue("@Password", password);
 
                 try
                 {
                     cmd.ExecuteNonQuery();
                     // MessageTextBlock.Text = "Registration successful!";
                     MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
+                    LoginSelectionButton_Click(sender, e);
                 }
                 catch (MySqlException ex)
                 {
                     MessageBox.Show("Registration failed!", "Failure", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    if (ex.Number == 1062) // Duplicate entry error code
+                    if (ex.Number == 1062)
                     {
-                       // MessageTextBlock.Text = "Username already exists.";
+                        MessageBox.Show("Username already exists.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     else
                     {
-                       // MessageTextBlock.Text = "An error occurred: " + ex.Message;
+                        MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
         }
+
+        private bool IsValidEmail(string email)
+        {
+            string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            return Regex.IsMatch(email, emailPattern);
+        }
+
+        // Method to validate password strength
+        private bool IsValidPassword(string password)
+        {
+            // Password must be at least 8 characters long, contain one uppercase letter,
+            // one lowercase letter, one digit, and one special character
+            string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$";
+            return Regex.IsMatch(password, passwordPattern);
+        }
+
+        private string ExtractName(string input)
+        {
+            string prefix = "System.Windows.Controls.TextBox: ";
+            if (input.StartsWith(prefix))
+            {
+                return input.Substring(prefix.Length).Trim();
+            }
+            return input;
+        }
+
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-
+           
         }
+
     }
 }
