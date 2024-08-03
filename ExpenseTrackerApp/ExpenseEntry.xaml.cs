@@ -1,4 +1,4 @@
-﻿using MySql.Data.MySqlClient;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,12 +15,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ExpenseTrackerApp;
 using Org.BouncyCastle.Utilities;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace ExpenseTrackerApp
 {
     public partial class ExpenseEntry : Window
     {
-        private string connectionString = "Server=localhost;Port=3306;Database=ExpenseTracker;Uid=root;";
+        private string connectionString = "Server=localhost\\SQLEXPRESS19;Database=ExpenseTracker;User Id=sa;Password=Conestoga1;";
         private ObservableCollection<string> expenseList = new ObservableCollection<string>();
         private ObservableCollection<string> participantList = new ObservableCollection<string>();
         public ObservableCollection<string> Participants { get; set; }
@@ -63,40 +65,11 @@ namespace ExpenseTrackerApp
                 return;
             }
 
-       /*     string splitMethod = (SplitMethodComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-            if (splitMethod == "By Percentage")
-            {
-                // Validate and parse percentages
-                string[] percentages = PercentagesTextBox.Text.Split(',').Select(p => p.Trim()).ToArray();
-                if (percentages.Length != participants.Split(',').Length)
-                {
-                    MessageTextBlock.Text = "The number of percentages must match the number of participants.";
-                    return;
-                }
-
-                decimal totalPercentage = percentages.Sum(p => decimal.Parse(p));
-                if (totalPercentage != 100)
-                {
-                    MessageTextBlock.Text = "Total percentage must equal 100.";
-                    return;
-                }
-            }
-            else if (splitMethod == "By Custom Amounts")
-            {
-                // Validate and parse custom amounts
-                string[] customAmounts = CustomAmountsTextBox.Text.Split(',').Select(a => a.Trim()).ToArray();
-                if (customAmounts.Length != participants.Split(',').Length)
-                {
-                    MessageTextBlock.Text = "The number of custom amounts must match the number of participants.";
-                    return;
-                }
-            }*/
-
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
                 string query = "INSERT INTO expenses (amount, description, date, payer, participants, split_method, split_details) VALUES (@amount, @description, @date, @payer, @participants, @split_method, @split_details)";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
+                SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@amount", amount);
                 cmd.Parameters.AddWithValue("@description", description);
                 cmd.Parameters.AddWithValue("@date", date.Value);
@@ -112,7 +85,7 @@ namespace ExpenseTrackerApp
                     MessageTextBlock.Foreground = new SolidColorBrush(Colors.Green);
                     LoadExpenses();
                 }
-                catch (MySqlException ex)
+                catch (SqlException ex)
                 {
                     MessageTextBlock.Text = "An error occurred: " + ex.Message;
                 }
@@ -123,12 +96,12 @@ namespace ExpenseTrackerApp
         {
             expenseList.Clear();
 
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
                 string query = "SELECT amount, description, date, payer, participants, split_method, split_details FROM expenses";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                MySqlDataReader reader = cmd.ExecuteReader();
+                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlDataReader reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
@@ -139,7 +112,8 @@ namespace ExpenseTrackerApp
                     string participants = reader.GetString("participants");
 
                     // Check for NULL values before calling GetString
-                    string splitMethod = reader.IsDBNull(reader.GetOrdinal("split_method")) ? "1" : reader.GetString("split_method");
+                    int splitMethodValue = reader.IsDBNull(reader.GetOrdinal("split_method")) ? 1 : reader.GetInt32(reader.GetOrdinal("split_method"));
+                    string splitMethod = splitMethodValue.ToString();
                     string splitDetails = reader.IsDBNull(reader.GetOrdinal("split_details")) ? "N/A" : reader.GetString("split_details");
                     int div = 1;
                    try
@@ -201,34 +175,12 @@ namespace ExpenseTrackerApp
            
         }
 
-        private void NewExpenseButton_Click(object sender, RoutedEventArgs e)
-        {
-            ExpenseEntry newExpenseWindow = new ExpenseEntry();
-            newExpenseWindow.Show();
-
-            // Close the current window (optional)
-            this.Close();
-        }
-
-        private void ExpenseHistoryButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Handle Expense History button click
-        }
-
-        private void GroupsButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Handle Groups button click
-        }
-
         private void Confirmation_PopUp_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = MessageBox.Show("Are you sure you want to exit the application?", "Confirm Exit", MessageBoxButton.YesNo);
 
             if (result == MessageBoxResult.Yes)
-            {
-               
-               
-
+            {    
                 MainWindow loginWindow = new MainWindow();
                 loginWindow.Show();
                 this.Close();

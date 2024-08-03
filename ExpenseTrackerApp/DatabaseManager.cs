@@ -1,4 +1,4 @@
-﻿using MySql.Data.MySqlClient;
+﻿using System.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +9,16 @@ namespace ExpenseTrackerApp
 {
     class DatabaseManager
     {
-            //private string connectionString = "Server=localhost:3306;Database=ExpenseTracker;";
-        private string connectionString = "Server=localhost;Port=3306;Database=ExpenseTracker;Uid=root;";
 
+        // private string connectionString = "Server=localhost;Port=3306;Database=ExpenseTracker;Uid=root;";
 
-        // private string connectionString = "Server=localhost:3306;Database=ExpenseTracker;Uid=yourusername;Pwd=yourpassword;";
+        private string connectionString = "Server=localhost\\SQLEXPRESS19;Database=ExpenseTracker;User Id=sa;Password=Conestoga1;";
+
+        //private string connectionString = "Data Source=DESKTOP-TIKT6T7\\SQLEXPRESS22;Initial Catalog=DbTest;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
 
         public void CreateUsersTable()
             {
-                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
                     string createTableQuery = @"
@@ -27,7 +28,7 @@ namespace ExpenseTrackerApp
                         password VARCHAR(255) NOT NULL
                     );";
 
-                    MySqlCommand cmd = new MySqlCommand(createTableQuery, conn);
+                    SqlCommand cmd = new SqlCommand(createTableQuery, conn);
 
                 string createExpenseTableQuery = @"CREATE TABLE IF NOT EXISTS expenses (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -38,7 +39,7 @@ namespace ExpenseTrackerApp
     participants VARCHAR(255) NOT NULL
 );";
 
-                MySqlCommand expensecmd = new MySqlCommand(createExpenseTableQuery, conn);
+                SqlCommand expensecmd = new SqlCommand(createExpenseTableQuery, conn);
 
                 try
                     {
@@ -46,7 +47,7 @@ namespace ExpenseTrackerApp
                     expensecmd.ExecuteNonQuery();
                         Console.WriteLine("Table 'users' created successfully or already exists.");
                     }
-                    catch (MySqlException ex)
+                    catch (SqlException ex)
                     {
                         Console.WriteLine("An error occurred while creating the table: " + ex.Message);
                     }

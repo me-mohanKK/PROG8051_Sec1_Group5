@@ -9,7 +9,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SqlClient;
-using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 
 
@@ -24,7 +23,7 @@ namespace ExpenseTrackerApp
     {
 
 
-        private string connectionString = "Server=localhost;Port=3306;Database=ExpenseTracker;Uid=root;";
+        private string connectionString = "Server=localhost\\SQLEXPRESS19;Database=ExpenseTracker;User Id=sa;Password=Conestoga1;";
 
         public MainWindow()
         {
@@ -56,11 +55,11 @@ namespace ExpenseTrackerApp
             string password = passwordBox.Password;
            
 
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
                 string query = "SELECT COUNT(1) FROM users WHERE username=@username AND password=@password";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
+                SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@username", userName.Text);
                 cmd.Parameters.AddWithValue("@password", password);
 
@@ -102,11 +101,11 @@ namespace ExpenseTrackerApp
 
             // Method to validate email format
             
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
                 string query = "INSERT INTO users (email, username, password) VALUES (@Email, @Username, @Password)";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
+                SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Email", email);
                 cmd.Parameters.AddWithValue("@Username", username);
                 cmd.Parameters.AddWithValue("@Password", password);
@@ -118,11 +117,12 @@ namespace ExpenseTrackerApp
                     MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     LoginSelectionButton_Click(sender, e);
                 }
-                catch (MySqlException ex)
+                catch (SqlException ex)
                 {
                     MessageBox.Show("Registration failed!", "Failure", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    if (ex.Number == 1062)
+                    //if (ex.Number == 1062)
+                    if (ex.Number == 2627) // Unique constraint error for SQL Server
                     {
                         MessageBox.Show("Username already exists.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
