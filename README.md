@@ -8,41 +8,39 @@ The Expense Tracker Application is a robust solution designed to help users mana
 
 ## Features
 
-1. **User Registration and Login**
-   - Users can create an account by providing a username, email, and password.
-   - Secure authentication and password storage.
-   - Input validation (e.g., email format, password strength).
+1. User Registration and Login: Secure user authentication to create accounts and log in.
+2. Expense Entry: Input expenses with details like amount, description, date, payer, and participants.
+3. Expense Tracking: Visual aids and balance calculations to track expenses.
+4. Debt Settlement: Record payments and update balances automatically.
+5. Expense History: View and filter past expenses and payments.
+6. Group Management:
+Create and delete groups.
+	Add and manage group members.
+	View group-specific expenses and balances.
+	Navigate to the new expense tab with group members added.
+Technologies Used
+	Frontend: WPF (Windows Presentation Foundation)
+	Backend: C# with .NET Framework
+	Database: SQL Server
+Setup and Installation
+	Prerequisites
+	Visual Studio with .NET development workload installed
+	SQL Server installed and running
 
-2. **Expense Entry**
-   - Users can input details of expenses including description, amount, date, and participants.
-   - Functionality to split costs among participants.
+## Steps
+Clone the repository:
 
-3. **Expense Tracking**
-   - Tracks all shared expenses and calculates each user's share.
-   - Maintains a running total of each user's balance.
+## Copy code
+git clone https://github.com/yourusername/expense-tracker-app.git
 
-4. **Debt Settlement**
-   - Allows users to settle debts by recording payments.
-   - Updates balances accordingly when debts are settled.
+## Open the solution:
+Open the solution file ExpenseTrackerApp.sln in Visual Studio.
 
-5. **Expense History**
-   - Displays a list of all expenses and settlements.
-   - Includes filter and search options for ease of access.
+## Setup the database:
+Create the necessary database and tables using the provided SQL scripts.
 
-6. **Group Management**
-   - Users can create groups for managing shared expenses.
-   - Functionality to add or remove members from groups.
-   - View group-specific expenses.
-
-## Getting Started
-
-### Prerequisites
-
-- [.NET Core](https://dotnet.microsoft.com/download)
-- [Visual Studio](https://visualstudio.microsoft.com/)
-
-### Installation
-
+## Run the application:
+Build and run the application from Visual Studio.
 1. Clone the repository:
-   ```sh
+
    git clone https://github.com/me-mohanKK/PROG8051_Sec1_Group5.git
