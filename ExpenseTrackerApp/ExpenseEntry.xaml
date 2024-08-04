@@ -7,7 +7,24 @@
         mc:Ignorable="d"
         WindowState="Maximized"
         Title="ExpenseEntry" Height="450" Width="800">
-
+    <Window.Resources>
+        <!-- Style for the TextBox with Placeholder -->
+        <Style x:Key="TextBoxWithPlaceholder" TargetType="TextBox">
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="Text" Value="{Binding RelativeSource={RelativeSource Self}, Path=Tag}"/>
+            <Style.Triggers>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="Text" Value=""/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                    <Setter Property="Text" Value="{Binding RelativeSource={RelativeSource Self}, Path=Tag}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
@@ -171,7 +188,7 @@
                                Height="30"
                                Margin="10"/>
                     <ListBox x:Name="ExpenseListBox"
-                             Margin="10" Height="200"/>
+                             Margin="10" Height="100" Background="Wheat"/>
                 </StackPanel>
                 </ScrollViewer>
                 
@@ -188,12 +205,13 @@
                 <StackPanel Margin="10">
                     <TextBlock Text="Expense History Screen" Foreground="White" FontSize="20" Margin="10"/>
                     <ListBox x:Name="MainExpenseListBox"
-                     Margin="10" Height="200"/>
+                     Margin="10" Height="200" Background="Wheat"/>
                 </StackPanel>
             </TabItem>
 
             <!-- Groups Tab -->
             <TabItem Header="Groups" Width="200" Height="40" Foreground="Wheat" FontSize="20">
+              
                 <TabItem.Background>
                     <LinearGradientBrush>
                         <GradientStop Color="Navy" Offset="0.0"/>
@@ -201,9 +219,53 @@
                     </LinearGradientBrush>
                 </TabItem.Background>
                 <StackPanel Margin="10">
-                    <TextBlock Text="Groups Screen" Foreground="White" FontSize="20" Margin="10"/>
-                    <!-- Add your controls for Groups here -->
-                </StackPanel>
+                    <!-- Create New Group Section -->
+                    <GroupBox Header="Create New Group" Margin="0,0,0,8">
+                        <StackPanel>
+                            <TextBox x:Name="GroupNameTextBox" Width="300" Text="Group Name" Background="Wheat" Foreground="Gray" GotFocus="RemovePlaceholderText" LostFocus="AddPlaceholderText" Margin="0,0,0,10"/>
+                            <TextBox x:Name="GroupMembersTextBox" Width="300" Height="100" Background="Wheat" TextWrapping="Wrap" AcceptsReturn="True" Text="Enter member names, separated by commas" Foreground="Gray" GotFocus="RemovePlaceholderText" LostFocus="AddPlaceholderText"/>
+                            <Button Content="Save Group"
+                                    Foreground="Wheat"
+                                    FontSize="20"
+                                    HorizontalAlignment="Center"
+                                    Background="DarkGreen"
+                                    HorizontalContentAlignment="Center"
+                                    
+                                    Width="200"
+                                    Height="35"
+                                    Click="SaveGroup_Click" Margin="0,15,0,0"/>
+                            <TextBlock x:Name="GroupIdTextBlock" Visibility="Collapsed"/>
+                         
+                        </StackPanel>
+                    </GroupBox>
+
+                    <!-- Manage Existing Groups Section -->
+                        <GroupBox Header="Manage Existing Groups" Margin="0,0,0,1">
+                            <StackPanel>
+                            <ListBox x:Name="GroupsListBox" Background="Wheat" Width="300" Height="180" SelectionChanged="GroupsListBox_SelectionChanged"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                              <Button Content="Edit Group" Foreground="Wheat"
+                                FontSize="15"
+                                HorizontalAlignment="Center"
+                                Background="Navy"
+                                HorizontalContentAlignment="Center"
+                                Width="100"
+                                Height="35" Click="EditGroup_Click"/>
+                                <Button Content="Delete Group" 
+                                                Foreground="Wheat"
+                                                FontSize="15"
+                                                HorizontalAlignment="Center"
+                                                Background="DarkRed"
+                                                HorizontalContentAlignment="Center"
+                                                Width="100"
+                                                Height="35"
+                                                Click="DeleteGroup_Click" Margin="10,0,0,0"/>       
+                            </StackPanel>
+                            <TextBlock x:Name="GroupDetailsTextBlock" Width="300"
+                                       Margin="0,10,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        </GroupBox>
+                    </StackPanel>               
             </TabItem>
 
             <!-- Logout Tab -->
@@ -214,14 +276,16 @@
                         <GradientStop Color="DarkRed" Offset="1"/>
                     </LinearGradientBrush>
                 </TabItem.Background>
-                <StackPanel Margin="10">
+                <StackPanel Margin="20">
                     <Button Content="Logout" 
                             Foreground="Wheat"
-                            FontSize="20"
+                            FontSize="30"
                             HorizontalAlignment="Center"
-                            Background="Transparent"
+                            Background= "Transparent"
                             HorizontalContentAlignment="Center"
-                            Margin="10"
+                            Margin="100"
+                            Width="200"
+                            Height="50"
                             Click="LogoutButton_Click"/>
                 </StackPanel>
             </TabItem>

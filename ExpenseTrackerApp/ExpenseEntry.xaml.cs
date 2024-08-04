@@ -204,5 +204,161 @@ namespace ExpenseTrackerApp
                 participantList.Remove(participant);
             }
         }
+
+         private void SaveGroup_Click(object sender, RoutedEventArgs e)
+        {
+            string groupName = GroupNameTextBox.Text.Trim();
+            string groupMembers = GroupMembersTextBox.Text.Trim();
+
+            if (string.IsNullOrEmpty(groupName) || groupName == "Group Name" ||
+                string.IsNullOrEmpty(groupMembers) || groupMembers == "Enter member names, separated by commas")
+            {
+                MessageBox.Show("Please enter a valid group name and members.");
+                return;
+            }
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "INSERT INTO Groups (GroupName, Members) VALUES (@GroupName, @Members)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@GroupName", groupName);
+                cmd.Parameters.AddWithValue("@Members", groupMembers);
+
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Group created successfully.");
+                    LoadGroups();
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show("An error occurred: " + ex.Message);
+                }
+            }
+        }
+
+        private void RemovePlaceholderText(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox != null && textBox.Foreground == Brushes.Gray)
+            {
+                textBox.Text = string.Empty;
+                textBox.Foreground = Brushes.Black;
+            }
+        }
+
+        private void AddPlaceholderText(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox != null && string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                textBox.Foreground = Brushes.Gray;
+
+                if (textBox == GroupNameTextBox)
+                    textBox.Text = "Group Name";
+                else if (textBox == GroupMembersTextBox)
+                    textBox.Text = "Enter member names, separated by commas";
+            }
+        }
+
+
+
+        private void LoadGroups()
+        {
+            GroupsListBox.Items.Clear();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT GroupName FROM Groups";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    GroupsListBox.Items.Add(reader["GroupName"].ToString());
+                }
+            }
+        }
+
+        private void DeleteGroup_Click(object sender, RoutedEventArgs e)
+        {
+            string selectedGroup = GroupsListBox.SelectedItem as string;
+            if (selectedGroup == null)
+            {
+                MessageBox.Show("Please select a group to delete.");
+                return;
+            }
+
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete the group?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (result == MessageBoxResult.Yes)
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    string query = "DELETE FROM Groups WHERE GroupName = @GroupName";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@GroupName", selectedGroup);
+
+                    try
+                    {
+
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Group deleted successfully.");
+                        LoadGroups();
+                    }
+                    catch (SqlException ex)
+                    {
+                        MessageBox.Show("An error occurred: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        private void GroupsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string selectedGroup = GroupsListBox.SelectedItem?.ToString();
+            if (string.IsNullOrEmpty(selectedGroup))
+            {
+                GroupDetailsTextBlock.Text = string.Empty;
+                return;
+            }
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string selectGroupDetailsQuery = "SELECT Members FROM Groups WHERE GroupName = @GroupName";
+                SqlCommand cmd = new SqlCommand(selectGroupDetailsQuery, conn);
+                cmd.Parameters.AddWithValue("@GroupName", selectedGroup);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    string groupMembers = reader.GetString(0);
+                    GroupDetailsTextBlock.Text = $"Group Name: {selectedGroup}\nMembers: {groupMembers}";
+                }
+                else
+                {
+                    GroupDetailsTextBlock.Text = string.Empty;
+                }
+            }
+        }
+
+        private void EditGroup_Click(object sender, RoutedEventArgs e)
+        {
+            if (GroupsListBox.SelectedItem != null)
+            {
+                if (GroupsListBox.SelectedItem is DataRowView selectedRow)
+                {
+                    GroupNameTextBox.Text = selectedRow["GroupName"].ToString();
+                    GroupMembersTextBox.Text = selectedRow["GroupMembers"].ToString();
+                    GroupIdTextBlock.Text = selectedRow["GroupId"].ToString();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a group to edit.");
+            }
+        }
     }
 }
