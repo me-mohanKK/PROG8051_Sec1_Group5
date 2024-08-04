@@ -18,17 +18,14 @@ Create and delete groups.
 	Add and manage group members.
 	View group-specific expenses and balances.
 	Navigate to the new expense tab with group members added.
-Technologies Used
+## Technologies Used
 	Frontend: WPF (Windows Presentation Foundation)
 	Backend: C# with .NET Framework
 	Database: SQL Server
-Setup and Installation
+## Setup and Installation
 	Prerequisites
 	Visual Studio with .NET development workload installed
 	SQL Server installed and running
-
-## Steps
-Clone the repository:
 
 ## Open the solution:
 Open the solution file ExpenseTrackerApp.sln in Visual Studio.
