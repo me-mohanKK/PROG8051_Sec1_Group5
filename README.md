@@ -30,9 +30,6 @@ Setup and Installation
 ## Steps
 Clone the repository:
 
-## Copy code
-git clone https://github.com/yourusername/expense-tracker-app.git
-
 ## Open the solution:
 Open the solution file ExpenseTrackerApp.sln in Visual Studio.
 
