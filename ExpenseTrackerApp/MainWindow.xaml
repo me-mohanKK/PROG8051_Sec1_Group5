@@ -65,23 +65,22 @@
             <StackPanel Grid.Row="1" Name="loginStackView" >
 
                 <TextBlock Text="Login"
-FontSize="20"
-FontWeight="SemiBold"
-FontFamily="helvetica"
-Foreground="Wheat"
-HorizontalAlignment="Center"
-Height="40"></TextBlock>
-                
+                FontSize="20"
+                FontWeight="SemiBold"
+                FontFamily="helvetica"
+                Foreground="Wheat"
+                HorizontalAlignment="Center"
+                Height="40"></TextBlock>    
+
                 <StackPanel Orientation="Vertical">
 
                     <Label Content="User Name" Foreground="White" 
                            HorizontalAlignment="Center"
-Background="Transparent"
-HorizontalContentAlignment="Left"
-Width="250"
- FontFamily="helvetica"
-                           
-                          />
+                        Background="Transparent"
+                        HorizontalContentAlignment="Left"
+                        Width="250"
+                         FontFamily="helvetica"                          
+                              />        
 
                     <TextBox FontFamily="Helvetica"
                          FontWeight="Light"
@@ -102,25 +101,52 @@ Width="250"
                             >
                     <Label Content="Password" Foreground="White" 
                              HorizontalAlignment="Center"
-  Background="Transparent"
-  HorizontalContentAlignment="Left"
-  Width="250"
- FontFamily="helvetica"
-                           />
+                          Background="Transparent"
+                          HorizontalContentAlignment="Left"
+                          Width="250"
+                         FontFamily="helvetica"
+                                                   />
                     <PasswordBox FontFamily="Helvetica"
-              FontWeight="Light"
-                              Name="passwordBox"
-              Password=""
-              Foreground="Wheat"
-              FontSize="20"
-              HorizontalAlignment="Center"
-              Background="Transparent"
-              HorizontalContentAlignment="Left"
-              Width="250"
-              Height="30"
+                      FontWeight="Light"
+                      Name="passwordBox"
+                      Password=""
+                      Foreground="Wheat"
+                      FontSize="20"
+                      HorizontalAlignment="Center"
+                      Background="Transparent"
+                      HorizontalContentAlignment="Left"
+                      Width="250"
+                      Height="30"
                                  ></PasswordBox>
-              
-            </StackPanel>
+
+                    <!-- Forgot Password link -->
+                    <TextBlock HorizontalAlignment="Center" 
+                               
+                                FontSize="12"
+                               VerticalAlignment="Bottom" Margin="10">
+                    <Hyperlink Foreground="LawnGreen" Click="ForgotPassword_Click">Forgot Password?</Hyperlink>
+                    </TextBlock>
+
+                    <!-- Forgot Password Popup -->
+                    <Popup Name="forgotPasswordPopup" Placement="Center" IsOpen="False" Width="400">
+                        <Border Background="White" BorderBrush="Black" BorderThickness="1" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="Enter your email" Margin="5"/>
+                                <TextBox Name="resetEmailTextBox" Width="200" Margin="5"/>
+
+                                <TextBlock Text="Enter new password" Margin="5,10,5,0"/>
+                                <PasswordBox Name="newPasswordBox" Width="200" Margin="5"/>
+
+                                <TextBlock Text="Confirm new password" Margin="5,10,5,0"/>
+                                <PasswordBox Name="confirmPasswordBox" Width="200" Margin="5"/>
+
+                                <Button Name="resetPasswordButton" Content="Reset Password" Background="CornflowerBlue" Width="150" Click="ResetPasswordButton_Click" Margin="5,10,5,5"/>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+                    
+
+                </StackPanel>
                 <StackPanel 
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

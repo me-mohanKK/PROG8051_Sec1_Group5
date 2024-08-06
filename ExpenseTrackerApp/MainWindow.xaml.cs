@@ -10,6 +10,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
+using System.Windows.Controls.Primitives;
 
 
 
@@ -158,8 +159,74 @@ namespace ExpenseTrackerApp
             }
             return input;
         }
+        private void ForgotPassword_Click(object sender, RoutedEventArgs e)
+        {
+            forgotPasswordPopup.IsOpen = true;
+        }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+
+        private void ResetPasswordButton_Click(object sender, RoutedEventArgs e)
+        {
+            string email = resetEmailTextBox.Text;
+            string newPassword = newPasswordBox.Password;
+            string confirmPassword = confirmPasswordBox.Password;
+
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
+            {
+                MessageBox.Show("All fields are required.");
+                return;
+            }
+
+            if (newPassword != confirmPassword)
+            {
+                MessageBox.Show("Passwords do not match.");
+                return;
+            }
+
+            if (!UserExists(email))
+            {
+                MessageBox.Show("Email not found.");
+                return;
+            }
+
+            UpdatePassword(email, newPassword);
+            MessageBox.Show("Password has been reset.");
+            forgotPasswordPopup.IsOpen = false;
+        }
+
+        private bool UserExists(string email)
+        {
+         
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT COUNT(*) FROM Users WHERE Email = @Email";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    int count = (int)cmd.ExecuteScalar();
+                    return count > 0;
+                }
+            }
+        }
+
+        private void UpdatePassword(string email, string newPassword)
+        {
+        
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "UPDATE Users SET Password = @Password WHERE Email = @Email";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Password", newPassword);
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+            private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
            
         }
