@@ -224,12 +224,7 @@ namespace ExpenseTrackerApp
             }
         }
 
-        private void CloseForgotPasswordPopup_Click(object sender, RoutedEventArgs e)
-        {
-            forgotPasswordPopup.IsOpen = false;
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+            private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
            
         }
