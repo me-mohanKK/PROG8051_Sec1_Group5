@@ -4,20 +4,18 @@
 
 ## Description
 
-The Expense Tracker Application is a robust solution designed to help users manage and track their shared expenses efficiently. The application offers features like user registration, login, expense entry, debt settlement, expense history viewing, and group management. It aims to simplify the process of managing shared costs among friends, family, or colleagues by providing an intuitive and user-friendly interface.
+The Expense Tracker Application is a user-friendly tool designed to help individuals and groups efficiently manage and track their shared expenses. It offers a streamlined process for handling shared costs among friends, family, or colleagues through a clean and intuitive interface.
 
 ## Features
 
 1. User Registration and Login: Secure user authentication to create accounts and log in.
 2. Expense Entry: Input expenses with details like amount, description, date, payer, and participants.
-3. Expense Tracking: Visual aids and balance calculations to track expenses.
-4. Debt Settlement: Record payments and update balances automatically.
-5. Expense History: View and filter past expenses and payments.
-6. Group Management:
-Create and delete groups.
-	Add and manage group members.
-	View group-specific expenses and balances.
-	Navigate to the new expense tab with group members added.
+3. Expense History: View and filter past expenses and payments.
+4. Group Management:
+	Create and delete groups.
+		Add and manage group members.
+		View group-specific expenses and balances.
+		Navigate to the new expense tab with group members added.
 ## Technologies Used
 	Frontend: WPF (Windows Presentation Foundation)
 	Backend: C# with .NET Framework
