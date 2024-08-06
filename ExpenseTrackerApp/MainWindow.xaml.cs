@@ -29,7 +29,6 @@ namespace ExpenseTrackerApp
         public MainWindow()
         {
             InitializeComponent();
-            // userName.Visibility = Visibility.Hidden;
             // Access the StackPanel
            registerStackView.Visibility = Visibility.Hidden;
             loginStackView.Visibility= Visibility.Hidden;
@@ -52,7 +51,7 @@ namespace ExpenseTrackerApp
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            //string username = username.;
+           
             string password = passwordBox.Password;
            
 
@@ -113,8 +112,7 @@ namespace ExpenseTrackerApp
 
                 try
                 {
-                    cmd.ExecuteNonQuery();
-                    // MessageTextBlock.Text = "Registration successful!";
+                    cmd.ExecuteNonQuery();                 
                     MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     LoginSelectionButton_Click(sender, e);
                 }
@@ -123,7 +121,7 @@ namespace ExpenseTrackerApp
                     MessageBox.Show("Registration failed!", "Failure", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     //if (ex.Number == 1062)
-                    if (ex.Number == 2627) // Unique constraint error for SQL Server
+                    if (ex.Number == 2627)
                     {
                         MessageBox.Show("Username already exists.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
