@@ -82,6 +82,7 @@
                              FontWeight="Light"
                              Foreground="Wheat"
                              FontSize="15"
+                             VerticalContentAlignment="Center"
                              HorizontalAlignment="Center"
                              Background="Transparent"
                              HorizontalContentAlignment="Left"
@@ -97,6 +98,7 @@
                     <TextBox x:Name="DescriptionTextBox"
                              FontFamily="Helvetica"
                              FontWeight="Light"
+                             VerticalContentAlignment="Center"
                              Foreground="Wheat"
                              FontSize="15"
                              HorizontalAlignment="Center"
@@ -127,6 +129,7 @@
                            FontSize="15"
                            FontFamily="Helvetica"/>
                     <TextBox x:Name="PayerTextBox"
+                             VerticalContentAlignment="Center"
                              FontFamily="Helvetica"
                              FontWeight="Light"
                              Foreground="Wheat"
@@ -206,9 +209,55 @@
                     <TextBlock Text="Expense History Screen" Foreground="White" FontSize="20" Margin="10"/>
                     <ListBox x:Name="MainExpenseListBox"
                      Margin="10" Height="200" Background="Wheat"/>
+                    <Button Content="Delete Expense" 
+                  Foreground="Wheat"
+                  FontSize="15"
+                  HorizontalAlignment="Center"
+                  Background="DarkRed"
+                  HorizontalContentAlignment="Center"
+                  Width="200"
+                  Height="35"
+                  Click="DeleteExpenseButton_Click" Margin="10,0,0,0"/>
                 </StackPanel>
             </TabItem>
 
+            <TabItem Header="Expense Tracking" Width="200" Height="40" Foreground="Wheat" FontSize="20">
+                <TabItem.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="Navy" Offset="0.0"/>
+                        <GradientStop Color="DarkRed" Offset="1"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
+                <StackPanel Margin="10">
+                    <TextBlock Text="Expense Tracking Screen" Foreground="White" FontSize="20" Margin="10"/>                    
+                    <ListView Name="ExpensesListView" Grid.Row="1" Margin="10" Height="200" Background="Wheat" SelectionChanged="ExpensesListView_SelectionChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" Width="100"/>
+                    <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="250"/>
+                    <GridViewColumn Header="Amount" DisplayMemberBinding="{Binding Amount}" Width="100"/>
+                    <GridViewColumn Header="Participants" DisplayMemberBinding="{Binding Participants}" Width="200"/>
+                </GridView>
+            </ListView.View>
+            </ListView>
+                    <TextBlock Text="Current Balances" FontSize="18" FontWeight="Bold" Margin="0,10,0,0"/>
+                    <ListView Name="BalanceListView">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="User" DisplayMemberBinding="{Binding UserName}" Width="150"/>
+                                <GridViewColumn Header="Balance" DisplayMemberBinding="{Binding Balance}" Width="100"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <GroupBox Header="Expense Summary" Margin="10" VerticalAlignment="Bottom" Height="200">
+                        <Grid>
+                            <!-- Placeholder for Graphs (e.g., Pie Chart, Bar Chart) -->
+                            <TextBlock Text="[Graphs/Charts Placeholder]" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </GroupBox>
+                </StackPanel>                
+            </TabItem>
+            
             <!-- Groups Tab -->
             <TabItem Header="Groups" Width="200" Height="40" Foreground="Wheat" FontSize="20">
               

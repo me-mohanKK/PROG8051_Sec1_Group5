@@ -25,6 +25,8 @@ namespace ExpenseTrackerApp
         private string connectionString = "Server=localhost\\SQLEXPRESS19;Database=ExpenseTracker;User Id=sa;Password=Conestoga1;";
         private ObservableCollection<string> expenseList = new ObservableCollection<string>();
         private ObservableCollection<string> participantList = new ObservableCollection<string>();
+        public ObservableCollection<Expense> Expenses { get; set; }
+        public ObservableCollection<UserBalance> UserBalances { get; set; }
         public ObservableCollection<string> Participants { get; set; }
 
         public ExpenseEntry()
@@ -37,6 +39,21 @@ namespace ExpenseTrackerApp
             LoadExpenses();
             PopulateParticipantsDropdown();
 
+            Expenses = new ObservableCollection<Expense>
+            {
+                new Expense { Date = DateTime.Now, Description = "Groceries", Amount = 150.00m, Participants = "John, Mike, Peter" },
+                new Expense { Date = DateTime.Now, Description = "Utilities", Amount = 75.00m, Participants = "Mike, Peter" }
+            };
+
+            UserBalances = new ObservableCollection<UserBalance>
+            {
+                new UserBalance { UserName = "John", Balance = 225.00m },
+                new UserBalance { UserName = "Peter", Balance = -75.00m }
+            };
+
+            // Bind data to ListView
+            ExpensesListView.ItemsSource = Expenses;
+            BalanceListView.ItemsSource = UserBalances;
         }
 
         private void AddExpenseButton_Click(object sender, RoutedEventArgs e)
@@ -126,10 +143,17 @@ namespace ExpenseTrackerApp
                     }
                     
                     //int div = int.Parse(splitMethod);
-                    string expense = $"{amount:C} - {description} on {date.ToShortDateString()} by {payer} split to {(div == 0 ? 1 : div + 1)} person {(amount/ (div==0?1:div+1)).ToString("F2")} equally";
+                  
+                    string expense = $"{amount:C} - {description} on {date.ToShortDateString()} by {payer} split to {(div == 0 ? 1 : div + 1)} person(s) {(amount / (div == 0 ? 1 : div + 1)).ToString("F2")} equally";
                     expenseList.Add(expense);
                 }
             }
+        }
+
+        public class UserBalance
+        {
+            public string UserName { get; set; }
+            public decimal Balance { get; set; }
         }
 
         private void PopulateParticipantsDropdown()
@@ -137,7 +161,9 @@ namespace ExpenseTrackerApp
             // Example participants list; this can be fetched from the database
             List<string> participants = new List<string> { "John", "Mike", "Peter" };
 
-            ParticipantsComboBox.ItemsSource = participants;
+            ParticipantsComboBox.ItemsSource = participants;       
+
+            
         }
 
         private void ParticipantsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -156,31 +182,39 @@ namespace ExpenseTrackerApp
                 //MessageBox.Show($"Selected participant: {selectedParticipant}");
             }
         }
-        
 
-      /*  private void RemoveButton_Click(object sender, SelectionChangedEventArgs e)
+        private void ExpensesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //Participants.Remove();
-        }*/
-
-   
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
-        {
-
-            Confirmation_PopUp_Click(sender,e);
-            // Close the current window (ExpenseEntry)
-            
-
-            // Show the login window
-           
+            if (ExpensesListView.SelectedItem is Expense selectedExpense)
+            {
+                MessageBox.Show($"Details for {selectedExpense.Description}: Amount: {selectedExpense.Amount}, Participants: {selectedExpense.Participants}",
+                                "Expense Details", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
-        private void Confirmation_PopUp_Click(object sender, RoutedEventArgs e)
+
+        public class Expense
+        {
+            public DateTime Date { get; set; }
+            public string Description { get; set; }
+            public decimal Amount { get; set; }
+            public string Participants { get; set; }
+            public int ExpenseID { get; set; }
+        }
+
+
+        /*  private void RemoveButton_Click(object sender, SelectionChangedEventArgs e)
+          {
+              //Participants.Remove();
+          }*/
+
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = MessageBox.Show("Are you sure you want to exit the application?", "Confirm Exit", MessageBoxButton.YesNo);
 
             if (result == MessageBoxResult.Yes)
-            {    
+            {
                 MainWindow loginWindow = new MainWindow();
                 loginWindow.Show();
                 this.Close();
@@ -190,6 +224,7 @@ namespace ExpenseTrackerApp
                 // Do nothing, just close the message box
             }
         }
+
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -279,6 +314,44 @@ namespace ExpenseTrackerApp
                     GroupsListBox.Items.Add(reader["GroupName"].ToString());
                 }
             }
+        }
+
+        private void DeleteExpenseButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedExpense = MainExpenseListBox.SelectedItem as Expense; // Replace `Expense` with your actual type
+            if (selectedExpense == null)
+            {
+                MessageBox.Show("Please select an expense to delete.");
+                return;
+            }
+
+            // Confirm deletion with the user
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this expense?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (result == MessageBoxResult.Yes)
+            {
+                // Perform database operation to delete the selected expense
+                using (SqlConnection conn = new SqlConnection(connectionString)) // Ensure you have a valid connection string
+                {
+                    conn.Open();
+                    string query = "DELETE FROM Expenses WHERE ExpenseId = @ExpenseId"; // Adjust the query according to your table schema
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@ExpenseId", selectedExpense.ExpenseID); // Replace `Id` with your expense identifier
+
+                    try
+                    {
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Expense deleted successfully.");
+
+                        // Refresh the ListBox or data source
+                        LoadExpenses(); // Method to reload or refresh the ListBox
+                    }
+                    catch (SqlException ex)
+                    {
+                        MessageBox.Show("An error occurred: " + ex.Message);
+                    }
+                }
+            }
+            
         }
 
         private void DeleteGroup_Click(object sender, RoutedEventArgs e)
