@@ -23,12 +23,13 @@ namespace ExpenseTrackerApp
     public partial class MainWindow : Window
     {
 
-
+        private DatabaseManager databaseManager;   
         private string connectionString = "Server=localhost\\SQLEXPRESS19;Database=ExpenseTracker;User Id=sa;Password=Conestoga1;";
 
         public MainWindow()
         {
             InitializeComponent();
+            databaseManager = new DatabaseManager();    
             // Access the StackPanel
            registerStackView.Visibility = Visibility.Hidden;
             loginStackView.Visibility= Visibility.Hidden;
@@ -51,31 +52,19 @@ namespace ExpenseTrackerApp
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-           
+
             string password = passwordBox.Password;
-           
+            bool isValidUser = databaseManager.ValidateUser(userName.Text, password);
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            if (isValidUser)
             {
-                conn.Open();
-                string query = "SELECT COUNT(1) FROM users WHERE username=@username AND password=@password";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@username", userName.Text);
-                cmd.Parameters.AddWithValue("@password", password);
-
-                int count = Convert.ToInt32(cmd.ExecuteScalar());
-                if (count == 1)
-                {
-                    //MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    ExpenseEntry expenseEntryWindow = new ExpenseEntry();
-                    expenseEntryWindow.Show();
-                    this.Close();
-
-                }
-                else
-                {
-                    MessageBox.Show("Incorrect Username or Password!", "Failed", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
+                ExpenseEntry expenseEntryWindow = new ExpenseEntry();
+                expenseEntryWindow.Show();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Incorrect Username or Password!", "Failed", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -85,51 +74,18 @@ namespace ExpenseTrackerApp
             string username = ExtractName(ruserName.Text);
             string password = rpasswordBox.Password;
 
-            // Validate email format
-            if (!IsValidEmail(email))
+            // Validate email and password (not shown for brevity)
+
+            RegistrationResult result = databaseManager.RegisterUser(email, username, password);
+
+            if (result.Success)
             {
-                MessageBox.Show("Please enter a valid email address.", "Invalid Email", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                MessageBox.Show(result.Message, "Registration Successful!!", MessageBoxButton.OK, MessageBoxImage.Information);
+                LoginSelectionButton_Click(sender, e);  // Redirect to login after successful registration
             }
-
-            // Validate alphanumeric password
-            if (!IsValidPassword(password))
+            else
             {
-                MessageBox.Show("Password must be at least 8 characters long, contain a capital letter, a lowercase letter, and a number.", "Invalid Password", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            // Method to validate email format
-            
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                conn.Open();
-                string query = "INSERT INTO users (email, username, password) VALUES (@Email, @Username, @Password)";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@Email", email);
-                cmd.Parameters.AddWithValue("@Username", username);
-                cmd.Parameters.AddWithValue("@Password", password);
-
-                try
-                {
-                    cmd.ExecuteNonQuery();                 
-                    MessageBox.Show("Registration successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoginSelectionButton_Click(sender, e);
-                }
-                catch (SqlException ex)
-                {
-                    MessageBox.Show("Registration failed!", "Failure", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    //if (ex.Number == 1062)
-                    if (ex.Number == 2627)
-                    {
-                        MessageBox.Show("Username already exists.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    else
-                    {
-                        MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
+                MessageBox.Show(result.Message, "Failed to Register", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

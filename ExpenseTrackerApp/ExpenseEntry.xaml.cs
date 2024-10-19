@@ -17,6 +17,9 @@ using ExpenseTrackerApp;
 using Org.BouncyCastle.Utilities;
 using System.Data.SqlClient;
 using System.Data;
+using LiveCharts;
+using LiveCharts.Wpf;
+using System.Diagnostics;
 
 namespace ExpenseTrackerApp
 {
@@ -25,38 +28,43 @@ namespace ExpenseTrackerApp
         private string connectionString = "Server=localhost\\SQLEXPRESS19;Database=ExpenseTracker;User Id=sa;Password=Conestoga1;";
         private ObservableCollection<string> expenseList = new ObservableCollection<string>();
         private ObservableCollection<string> participantList = new ObservableCollection<string>();
-        public ObservableCollection<Expense> Expenses { get; set; }
-        public ObservableCollection<UserBalance> UserBalances { get; set; }
+        public ObservableCollection<Expense> Expenses { get; set; } = new ObservableCollection<Expense>();
         public ObservableCollection<string> Participants { get; set; }
+        public ObservableCollection<Participant> ETParticipants { get; set; }
+        private int splitMethod;
+        ExpenseLogic expenseLogic = new ExpenseLogic();
 
         public ExpenseEntry()
         {
             InitializeComponent();
             ExpenseListBox.ItemsSource = expenseList;
-            MainExpenseListBox.ItemsSource = expenseList;
+            //MainExpenseListBox.ItemsSource = Expenses;
             ParticipantListBox.ItemsSource = participantList;
             Participants = new ObservableCollection<string>();
+
             LoadExpenses();
             PopulateParticipantsDropdown();
+            LoadExpensesFromDatabase();
+            LoadParticipants();
 
-            Expenses = new ObservableCollection<Expense>
-            {
-                new Expense { Date = DateTime.Now, Description = "Groceries", Amount = 150.00m, Participants = "John, Mike, Peter" },
-                new Expense { Date = DateTime.Now, Description = "Utilities", Amount = 75.00m, Participants = "Mike, Peter" }
-            };
+            /*  Expenses = new ObservableCollection<Expense>
+              {
+                  new Expense { Date = DateTime.Now, Description = "Groceries", Amount = 150.00m, Participants = "John, Mike, Peter" },
+                  new Expense { Date = DateTime.Now, Description = "Utilities", Amount = 75.00m, Participants = "Mike, Peter" }
+              };*/
 
-            UserBalances = new ObservableCollection<UserBalance>
-            {
-                new UserBalance { UserName = "John", Balance = 225.00m },
-                new UserBalance { UserName = "Peter", Balance = -75.00m }
-            };
+            /*   UserBalances = new ObservableCollection<UserBalance>
+               {
+                   new UserBalance { UserName = "John", Balance = 225.00m },
+                   new UserBalance { UserName = "Peter", Balance = -75.00m }
+               };*/
 
             // Bind data to ListView
             ExpensesListView.ItemsSource = Expenses;
-            BalanceListView.ItemsSource = UserBalances;
+            //BalanceListView.ItemsSource = UserBalances;
         }
 
-        private void AddExpenseButton_Click(object sender, RoutedEventArgs e)
+        public void AddExpenseButton_Click(object sender, RoutedEventArgs e)
         {
             MessageTextBlock.Text = "";
 
@@ -82,6 +90,12 @@ namespace ExpenseTrackerApp
                 return;
             }
 
+            
+            string formattedExpense = expenseLogic.FormatExpense(amount, description, date.Value, payer, participantList.Count);
+
+            // Use formattedExpense as needed
+            MessageTextBlock.Text = formattedExpense;
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
@@ -92,7 +106,7 @@ namespace ExpenseTrackerApp
                 cmd.Parameters.AddWithValue("@date", date.Value);
                 cmd.Parameters.AddWithValue("@payer", payer);
                 cmd.Parameters.AddWithValue("@participants", participants);
-                cmd.Parameters.AddWithValue("@split_method", Participants.Count().ToString());
+                cmd.Parameters.AddWithValue("@split_method", participantList.Count.ToString());
                 cmd.Parameters.AddWithValue("@split_details", "");
 
                 try
@@ -109,61 +123,184 @@ namespace ExpenseTrackerApp
             }
         }
 
-        private void LoadExpenses()
+       /* public string FormatExpense(decimal amount, string description, DateTime date, string payer, int div)
+        {
+            *//* // Calculate the number of participants from div
+             int numberOfPersons = div > 0 ? div : 1; // Use div directly if it's more than 0, else fallback to 1
+             decimal splitAmount = amount / numberOfPersons; // Calculate the split amount
+             return $"{amount:C} - {description} on {date.ToShortDateString()} by {payer} split to {numberOfPersons} person(s) {splitAmount:F2} equally";
+         *//*
+            // Calculate total participants including the payer
+            int totalParticipants = Math.Max(1, div + 1); // Include the payer in the count
+            decimal splitAmount = amount / totalParticipants; // Calculate each participant's share
+
+            return $"{amount:C} - {description} on {date.ToShortDateString()} by {payer} split to {totalParticipants} person(s) {splitAmount:F2} each (including payer)";
+        }*/
+
+
+            public void LoadExpenses()
         {
             expenseList.Clear();
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                string query = "SELECT amount, description, date, payer, participants, split_method, split_details FROM expenses";
+                string query = "SELECT amount, description, date, payer, participants, split_method FROM expenses";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    decimal amount = reader.GetDecimal("amount");
-                    string description = reader.GetString("description");
-                    DateTime date = reader.GetDateTime("date");
-                    string payer = reader.GetString("payer");
-                    string participants = reader.GetString("participants");
+                    decimal amount = reader.GetDecimal(reader.GetOrdinal("amount"));
+                    string description = reader.GetString(reader.GetOrdinal("description"));
+                    DateTime date = reader.GetDateTime(reader.GetOrdinal("date"));
+                    string payer = reader.GetString(reader.GetOrdinal("payer"));
 
-                    // Check for NULL values before calling GetString
+                    // Get the split method
                     int splitMethodValue = reader.IsDBNull(reader.GetOrdinal("split_method")) ? 1 : reader.GetInt32(reader.GetOrdinal("split_method"));
-                    string splitMethod = splitMethodValue.ToString();
-                    string splitDetails = reader.IsDBNull(reader.GetOrdinal("split_details")) ? "N/A" : reader.GetString("split_details");
-                    int div = 1;
-                   try
-                    {
-                        int.TryParse(splitMethod, out div);
-                    } catch (Exception ex)
-                    {
-                        div = 1;
+                    int div = splitMethodValue; // Directly assign splitMethodValue
 
-                    }
-                    
-                    //int div = int.Parse(splitMethod);
-                  
-                    string expense = $"{amount:C} - {description} on {date.ToShortDateString()} by {payer} split to {(div == 0 ? 1 : div + 1)} person(s) {(amount / (div == 0 ? 1 : div + 1)).ToString("F2")} equally";
+                    // Use the extracted method for formatting
+                    string expense = expenseLogic.FormatExpense(amount, description, date, payer, div); // Use the calculator instance
                     expenseList.Add(expense);
                 }
             }
         }
 
-        public class UserBalance
+        private void LoadParticipants()
         {
-            public string UserName { get; set; }
-            public decimal Balance { get; set; }
+            // Assuming you have a list of participants
+             ETParticipants = new ObservableCollection<Participant>
+    {
+       new Participant { Name = "John", TotalOwed = 200, TotalOwes = 50 },
+        new Participant { Name = "Mike", TotalOwed = 100, TotalOwes = 75 },
+        new Participant { Name = "Peter", TotalOwed = 50, TotalOwes = 100 }
+    };
+
+    ParticipantsListBox.ItemsSource = ETParticipants;
+        }
+
+        private void LoadExpensesFromDatabase()
+        {
+            // Clear existing data
+            Expenses.Clear();
+
+            // SQL query to fetch expenses from the database
+            string query = "SELECT date, description, amount, participants FROM expenses";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        // Create a new Expense instance for each record retrieved
+                        var expense = new Expense
+                        {
+                            Date = reader.GetDateTime(reader.GetOrdinal("date")),
+                            Description = reader.GetString(reader.GetOrdinal("description")),
+                            Amount = reader.GetDecimal(reader.GetOrdinal("amount")),
+                            Participants = reader.GetString(reader.GetOrdinal("participants"))
+                        };
+
+                        // Add the expense to the ObservableCollection
+                        Expenses.Add(expense);
+                    }
+                }
+            }
+
+            // Bind the data to the ListView or ListBox (if necessary)
+            ExpensesListView.ItemsSource = Expenses;  // ListView binding
+            //MainExpenseListBox.ItemsSource = Expenses;  // ListBox binding
+        }
+
+        public class Participant
+        {
+            public string Name { get; set; }
+            public decimal TotalOwed { get; set; }
+            public decimal TotalOwes { get; set; }
         }
 
         private void PopulateParticipantsDropdown()
         {
+
             // Example participants list; this can be fetched from the database
             List<string> participants = new List<string> { "John", "Mike", "Peter" };
 
             ParticipantsComboBox.ItemsSource = participants;       
 
             
+        }
+        private void ParticipantsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ParticipantsListBox.SelectedItem is Participant selectedParticipant)
+            {
+                // Access the participant's Name property
+                string participantName = selectedParticipant.Name;
+
+                // Pass the participant name to display the corresponding balance
+                DisplayParticipantBalance(participantName);
+            }
+        }
+
+        private void DisplayParticipantBalance(string participant)
+        {
+            // Hardcoded balance data for demonstration purposes
+            decimal totalOwed = 0;
+            decimal totalOwes = 0;
+
+            switch (participant)
+            {
+                case "John":
+                    totalOwed = 200;  // John is owed $200
+                    totalOwes = 50;   // John owes $50
+                    break;
+                case "Mike":
+                    totalOwed = 100;  // Mike is owed $100
+                    totalOwes = 75;   // Mike owes $75
+                    break;
+                case "Peter":
+                    totalOwed = 50;   // Peter is owed $50
+                    totalOwes = 100;  // Peter owes $100
+                    break;
+                default:
+                    totalOwed = 0;    // Default case if participant not found
+                    totalOwes = 0;
+                    break;
+            }
+
+            // Update the pie chart with the hardcoded values
+            UpdatePieChart(totalOwed, totalOwes);
+        }
+
+        private void UpdatePieChart(decimal totalOwed, decimal totalOwes)
+        {
+            // Clear previous chart data
+            BalancePieChart.Series.Clear();
+
+            // Create series for the pie chart
+            PieSeries seriesOwed = new PieSeries
+            {
+                Title = "Owed to Others",
+                Values = new ChartValues<decimal> { totalOwes },
+                DataLabels = true,
+                LabelPoint = point => $"{point.Y:C}"
+            };
+
+            PieSeries seriesOwes = new PieSeries
+            {
+                Title = "Owed by Others",
+                Values = new ChartValues<decimal> { totalOwed },
+                DataLabels = true,
+                LabelPoint = point => $"{point.Y:C}"
+            };
+
+            // Update pie chart with new data
+            BalancePieChart.Series.Add(seriesOwed);
+            BalancePieChart.Series.Add(seriesOwes);
         }
 
         private void ParticipantsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -172,15 +309,28 @@ namespace ExpenseTrackerApp
             if (ParticipantsComboBox.SelectedItem != null)
             {
                 string selectedParticipant = ParticipantsComboBox.SelectedItem.ToString();
-                if (!Participants.Contains(selectedParticipant))
+
+                // Check if the participant is not already in the list
+                if (!participantList.Contains(selectedParticipant))
                 {
-                    Participants.Add(selectedParticipant);
+                    // Add the selected participant to the ObservableCollection
                     participantList.Add(selectedParticipant);
                 }
-               
-                // Do something with the selected participant
-                //MessageBox.Show($"Selected participant: {selectedParticipant}");
+                // Update split method after adding participant
+                UpdateSplitMethod();
             }
+        }
+
+        private void UpdateSplitMethod()
+        {
+            int numberOfParticipants = participantList.Count;
+
+            // Assuming splitMethod represents the number of participants minus one
+            // If no participants, set to zero
+            splitMethod = (numberOfParticipants > 1) ? numberOfParticipants - 1 : 0;
+
+            // Debugging log to confirm the split method value
+            Debug.WriteLine($"Updated split method: {splitMethod}");
         }
 
         private void ExpensesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -318,7 +468,7 @@ namespace ExpenseTrackerApp
 
         private void DeleteExpenseButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedExpense = MainExpenseListBox.SelectedItem as Expense; // Replace `Expense` with your actual type
+            var selectedExpense = ExpensesListView.SelectedItem as Expense; // Replace `Expense` with your actual type
             if (selectedExpense == null)
             {
                 MessageBox.Show("Please select an expense to delete.");
