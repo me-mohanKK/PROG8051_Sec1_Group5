@@ -33,6 +33,7 @@ namespace ExpenseTrackerApp
         public ObservableCollection<Participant> ETParticipants { get; set; }
         private int splitMethod;
         ExpenseLogic expenseLogic = new ExpenseLogic();
+        PaymentService paymentService = new PaymentService();
 
         public ExpenseEntry()
         {
@@ -318,6 +319,36 @@ namespace ExpenseTrackerApp
                 }
                 // Update split method after adding participant
                 UpdateSplitMethod();
+            }
+        }
+
+        private async void SettleButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (decimal.TryParse(AmountTextBox.Text, out decimal amount) && amount > 0)
+                {
+                    // Convert amount to cents as Stripe expects the smallest unit of currency
+                    long amountInCents = (long)(amount * 100);
+
+                    var paymentIntent = await paymentService.CreatePaymentIntent(amountInCents);
+                    if (paymentIntent != null)
+                    {
+                        MessageBox.Show("Payment initiated. Use Stripe's test card to complete.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Payment could not be initiated.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please enter a valid amount.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
             }
         }
 
