@@ -13,13 +13,21 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using ExpenseTrackerApp;
 using Org.BouncyCastle.Utilities;
 using System.Data.SqlClient;
 using System.Data;
 using LiveCharts;
 using LiveCharts.Wpf;
 using System.Diagnostics;
+using Stripe;
+using System.Globalization;
+using ExpenseTrackerApp.Payments;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Net;
+using Stripe.Checkout;
+using System.Printing;
+
 
 namespace ExpenseTrackerApp
 {
@@ -34,6 +42,7 @@ namespace ExpenseTrackerApp
         private int splitMethod;
         ExpenseLogic expenseLogic = new ExpenseLogic();
         PaymentService paymentService = new PaymentService();
+        private HttpListener _listener;
 
         public ExpenseEntry()
         {
@@ -47,6 +56,7 @@ namespace ExpenseTrackerApp
             PopulateParticipantsDropdown();
             LoadExpensesFromDatabase();
             LoadParticipants();
+            StripeConfiguration.ApiKey = "sk_test_51QGmMKKGIcfOeSNZJp3rrfZkhVtI8Bnh6GZw8BboWjgkrdhgeRWEfHKSAMe8q8FUw4u8ShcghjYYJ3AYWlZFO56b000TEQS02j";
 
             /*  Expenses = new ObservableCollection<Expense>
               {
@@ -322,11 +332,15 @@ namespace ExpenseTrackerApp
             }
         }
 
-        private async void SettleButton_Click(object sender, RoutedEventArgs e)
+        /*private async void SettleButton_Click(object sender, RoutedEventArgs e)
         {
+            //MessageBox.Show(SettlementAmountTextBox.Text);
+            string inputText = SettlementAmountTextBox.Text.Trim();
             try
             {
-                if (decimal.TryParse(AmountTextBox.Text, out decimal amount) && amount > 0)
+                //if (decimal.TryParse(AmountTextBox.Text, out decimal amount) && amount > 0)
+                if (decimal.TryParse(inputText, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal amount) && amount > 0)
+
                 {
                     // Convert amount to cents as Stripe expects the smallest unit of currency
                     long amountInCents = (long)(amount * 100);
@@ -350,8 +364,119 @@ namespace ExpenseTrackerApp
             {
                 MessageBox.Show($"Error: {ex.Message}");
             }
+        }*/
+        private async void SettleButton_Click(object sender, RoutedEventArgs e)
+        {
+            /*  if (decimal.TryParse(SettlementAmountTextBox.Text, out decimal amount) && amount > 0)
+              {
+                  long amountInCents = (long)(amount * 100);
+                  using (var client = new HttpClient())
+                  {
+                      client.BaseAddress = new Uri("https://localhost:5001/");
+                      var response = await client.PostAsJsonAsync("api/payment/create-checkout-session", new { AmountInCents = amountInCents });
+
+                      if (response.IsSuccessStatusCode)
+                      {
+                          var result = await response.Content.ReadFromJsonAsync<dynamic>();
+                          string sessionId = result?.sessionId;
+
+                          // Open Stripe Checkout in a WebView or Browser window
+                          System.Diagnostics.Process.Start(new ProcessStartInfo
+                          {
+                              FileName = $"https://checkout.stripe.com/pay/{sessionId}",
+                              UseShellExecute = true
+                          });
+                      }
+                      else
+                      {
+                          MessageBox.Show("Failed to initiate payment.");
+                      }
+                  }
+              }
+              else
+              {
+                  MessageBox.Show("Please enter a valid amount.");
+              }*/
+
+            if (decimal.TryParse(SettlementAmountTextBox.Text, out decimal amount) && amount > 0)
+            {
+                long amountInCents = (long)(amount * 100);
+                
+                // Create Stripe Checkout session
+                var checkoutUrl = await paymentService.CreateCheckoutSession(amountInCents);
+
+                if (!string.IsNullOrEmpty(checkoutUrl))
+                {
+                    MessageBox.Show("Redirecting to Stripe...");
+                    System.Diagnostics.Process.Start(new ProcessStartInfo
+                    {
+                        FileName = checkoutUrl,
+                        UseShellExecute = true
+                    });
+                }
+                else
+                {
+                    MessageBox.Show("Failed to create checkout session.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please enter a valid amount.");
+            }
         }
 
+        private void StartLocalServer()
+        {
+            _listener = new HttpListener();
+            _listener.Prefixes.Add("http://localhost:5000/success/");
+            _listener.Prefixes.Add("http://localhost:5000/cancel/");
+            _listener.Start();
+
+            Task.Run(() => ListenForStripeResponse());
+        }
+
+        private async void ListenForStripeResponse()
+        {
+            while (_listener.IsListening)
+            {
+                var context = await _listener.GetContextAsync();
+                string responseMessage;
+
+                if (context.Request.RawUrl.Contains("/success"))
+                {
+                    responseMessage = "<html><body>Payment Successful. You can close this window.</body></html>";
+                    Dispatcher.Invoke(() => MessageBox.Show("Payment completed successfully!"));
+                }
+                else if (context.Request.RawUrl.Contains("/cancel"))
+                {
+                    responseMessage = "<html><body>Payment Cancelled. You can close this window.</body></html>";
+                    Dispatcher.Invoke(() => MessageBox.Show("Payment was canceled."));
+                }
+                else
+                {
+                    responseMessage = "<html><body>Unknown request.</body></html>";
+                }
+
+                // Respond to Stripe
+                byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseMessage);
+                context.Response.ContentLength64 = buffer.Length;
+                await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+                context.Response.OutputStream.Close();
+
+                // Stop the server after handling the response
+                StopLocalServer();
+            }
+        }
+
+        private void StopLocalServer()
+        {
+            if (_listener != null && _listener.IsListening)
+            {
+                _listener.Stop();
+                _listener.Close();
+                _listener = null;
+            }
+        }
         private void UpdateSplitMethod()
         {
             int numberOfParticipants = participantList.Count;

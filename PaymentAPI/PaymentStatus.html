@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        #notification {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #okButton {
+            margin-top: 10px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+            #okButton:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div id="notification">
+        <h2 id="statusMessage">Payment Status</h2>
+        <button id="okButton">OK</button>
+    </div>
+
+    <script>
+        // Function to check URL parameters
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Load different content based on success or cancel status
+        const status = getUrlParameter('status');
+        let message = "Unknown status.";
+
+        if (status === 'success') {
+            message = "Payment Successful!";
+        } else if (status === 'cancel') {
+            message = "Payment Canceled!";
+        } else {
+            message = "Error occurred!";
+        }
+
+        document.getElementById('statusMessage').innerText = message;
+
+        document.getElementById('okButton').addEventListener('click', function () {
+            // Redirect to the expense tracker app when OK is clicked
+            window.location.href = "YourExpenseTrackerApp.exe"; // Replace with your actual app path
+        });
+    </script>
+</body>
+</html>

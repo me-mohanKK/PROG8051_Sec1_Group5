@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Status</title>
+</head>
+<body>
+    <iframe id="statusFrame" style="width: 100%; height: 500px;" src=""></iframe>
+
+    <script>
+        // Function to check URL parameters
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Load different content based on success or cancel status
+        const status = getUrlParameter('status');
+        if (status === 'success') {
+            document.getElementById('statusFrame').src = "success.html";
+        } else if (status === 'cancel') {
+            document.getElementById('statusFrame').src = "cancel.html";
+        } else {
+            document.getElementById('statusFrame').src = "error.html"; // An error page if needed
+        }
+    </script>
+</body>
+</html>
