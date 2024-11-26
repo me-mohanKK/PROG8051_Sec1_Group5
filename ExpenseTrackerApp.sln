@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpenseTrackerApp", "Expens
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpenseTracker_UnitTests", "ExpenseTracker_UnitTests\ExpenseTracker_UnitTests.csproj", "{A6E77D04-2203-4E64-8CA2-1ABA1C212AAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentAPI", "PaymentAPI\PaymentAPI.csproj", "{98809E88-FC3B-4BB2-874C-DA88870D4160}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentAPI", "PaymentAPI\PaymentAPI.csproj", "{98809E88-FC3B-4BB2-874C-DA88870D4160}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseTracker_IntegrationTest", "ExpenseTracker_IntegrationTest\ExpenseTracker_IntegrationTest.csproj", "{2204A3A7-4509-4A6F-AB6D-DEED105DD030}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{98809E88-FC3B-4BB2-874C-DA88870D4160}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98809E88-FC3B-4BB2-874C-DA88870D4160}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98809E88-FC3B-4BB2-874C-DA88870D4160}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2204A3A7-4509-4A6F-AB6D-DEED105DD030}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2204A3A7-4509-4A6F-AB6D-DEED105DD030}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2204A3A7-4509-4A6F-AB6D-DEED105DD030}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2204A3A7-4509-4A6F-AB6D-DEED105DD030}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

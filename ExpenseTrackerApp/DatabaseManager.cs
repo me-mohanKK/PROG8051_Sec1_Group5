@@ -138,6 +138,34 @@ namespace ExpenseTrackerApp
 
         //private string connectionString = "Data Source=DESKTOP-TIKT6T7\\SQLEXPRESS22;Initial Catalog=DbTest;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public void CreateUsersTable()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
