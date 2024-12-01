@@ -241,9 +241,12 @@ namespace ExpenseTrackerApp
             // Example participants list; this can be fetched from the database
             List<string> participants = new List<string> { "John", "Mike", "Peter" };
 
-            ParticipantsComboBox.ItemsSource = participants;       
+            ParticipantsComboBox.ItemsSource = participants;
+            // Populate both dropdowns
+            YourNameComboBox.ItemsSource = participants;
+            GroupMemberComboBox.ItemsSource = participants;
 
-            
+
         }
         private void ParticipantsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -367,42 +370,28 @@ namespace ExpenseTrackerApp
         }*/
         private async void SettleButton_Click(object sender, RoutedEventArgs e)
         {
-            /*  if (decimal.TryParse(SettlementAmountTextBox.Text, out decimal amount) && amount > 0)
-              {
-                  long amountInCents = (long)(amount * 100);
-                  using (var client = new HttpClient())
-                  {
-                      client.BaseAddress = new Uri("https://localhost:5001/");
-                      var response = await client.PostAsJsonAsync("api/payment/create-checkout-session", new { AmountInCents = amountInCents });
+            // Retrieve selected values from the dropdowns
+            string yourName = YourNameComboBox.SelectedItem as string;
+            string groupMember = GroupMemberComboBox.SelectedItem as string;
+            string amountText = SettlementAmountTextBox.Text;
 
-                      if (response.IsSuccessStatusCode)
-                      {
-                          var result = await response.Content.ReadFromJsonAsync<dynamic>();
-                          string sessionId = result?.sessionId;
+            // Validate inputs
+            if (string.IsNullOrEmpty(yourName) || string.IsNullOrEmpty(groupMember) || string.IsNullOrEmpty(amountText))
+            {
+                MessageBox.Show("Please fill in all fields before proceeding.");
+                return;
+            }
 
-                          // Open Stripe Checkout in a WebView or Browser window
-                          System.Diagnostics.Process.Start(new ProcessStartInfo
-                          {
-                              FileName = $"https://checkout.stripe.com/pay/{sessionId}",
-                              UseShellExecute = true
-                          });
-                      }
-                      else
-                      {
-                          MessageBox.Show("Failed to initiate payment.");
-                      }
-                  }
-              }
-              else
-              {
-                  MessageBox.Show("Please enter a valid amount.");
-              }*/
+            if (!decimal.TryParse(amountText, out decimal amount) || amount <= 0)
+            {
+                MessageBox.Show("Please enter a valid settlement amount.");
+                return;
+            }
 
-            if (decimal.TryParse(SettlementAmountTextBox.Text, out decimal amount) && amount > 0)
+            // Handle Stripe Payment
+            try
             {
                 long amountInCents = (long)(amount * 100);
-                
-                // Create Stripe Checkout session
                 var checkoutUrl = await paymentService.CreateCheckoutSession(amountInCents);
 
                 if (!string.IsNullOrEmpty(checkoutUrl))
@@ -416,14 +405,15 @@ namespace ExpenseTrackerApp
                 }
                 else
                 {
-                    MessageBox.Show("Failed to create checkout session.");
+                    MessageBox.Show("Failed to create Stripe checkout session.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Please enter a valid amount.");
+                MessageBox.Show("An error occurred while processing the payment: " + ex.Message);
             }
         }
+
 
         private void StartLocalServer()
         {
@@ -624,13 +614,49 @@ namespace ExpenseTrackerApp
 
         private void DeleteExpenseButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedExpense = ExpensesListView.SelectedItem as Expense; // Replace `Expense` with your actual type
-            if (selectedExpense == null)
+            /*  var selectedExpense = ExpensesListView.SelectedItem as Expense; // Replace `Expense` with your actual type
+
+              if (selectedExpense == null)
+              {
+                  MessageBox.Show("Please select an expense to delete.");
+                  return;
+              }*/
+
+            if (ExpensesListView.SelectedItem is Expense selectedExpense)
+            {
+                // Confirm deletion with the user
+                MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this expense?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    // Perform database operation to delete the selected expense
+                    using (SqlConnection conn = new SqlConnection(connectionString)) // Ensure you have a valid connection string
+                    {
+                        conn.Open();
+                        string query = "DELETE FROM Expenses WHERE ExpenseId = @ExpenseId"; // Adjust the query according to your table schema
+                        SqlCommand cmd = new SqlCommand(query, conn);
+                        cmd.Parameters.AddWithValue("@ExpenseId", selectedExpense.ExpenseID); // Replace `Id` with your expense identifier
+
+                        try
+                        {
+                            cmd.ExecuteNonQuery();
+                            MessageBox.Show("Expense deleted successfully.");
+
+                            // Refresh the ListBox or data source
+                            LoadExpenses(); // Method to reload or refresh the ListBox
+                        }
+                        catch (SqlException ex)
+                        {
+                            MessageBox.Show("An error occurred: " + ex.Message);
+                        }
+                    }
+                }
+            }
+            else
             {
                 MessageBox.Show("Please select an expense to delete.");
                 return;
             }
-
+/*
             // Confirm deletion with the user
             MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this expense?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (result == MessageBoxResult.Yes)
@@ -656,7 +682,7 @@ namespace ExpenseTrackerApp
                         MessageBox.Show("An error occurred: " + ex.Message);
                     }
                 }
-            }
+            }*/
             
         }
 
